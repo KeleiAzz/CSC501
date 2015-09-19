@@ -1,0 +1,67 @@
+1. Assuming the XINU text begins at address 0x0, draw a rough diagram of XINU's memory layout with addresses derived from your experimental measurements. Include the information you uncovered from running your version of printsegaddress() and printprocstks().
+
+|-----------| begin 0x0
+|           |
+|    text   | 
+|           |
+|-----------| etext: 0x00008892
+|           |
+|    data   |
+|           |
+|-----------| edata: 0x0000af20
+|           |
+|    bss    |
+|           |
+|-----------| ebss: 0x00010b98
+|           |
+|    heap   |
+|           |
+|-----------| stack limit: 0x00ffdffc 
+|           |
+|           | stack size: 4096
+|    stack  |
+|           |<--stack pointer: 00ffefb0
+|           |
+|-----------| stack base: 0x00ffeff8
+
+
+2. What is the difference in stack top address before and after calling printtos()? Draw a diagram to illustrate what are the contents of the items pushed into the stack between these two time points.
+
+|--------------|
+|local variable|
+|--------------|
+|      ebp     | after function call
+|--------------|
+|return address| 
+|--------------|
+|  parameter1  | before function call
+|--------------|
+|  parameter2  |
+|--------------|
+reference: http://www.cs.virginia.edu/~evans/cs216/guides/x86.html
+
+
+3. Which byte order is adopted in the host machine that we are using? How did you find out?
+
+It is Little Endian. We can use the code below to find out which byte order is adopted:
+int one = 1;
+char *test = (char *) &one;
+if(test[0] == 1) kprintf("Little endian\n");
+else kprintf("Big endian\n");
+
+reference: http://teaching.idallen.com/cst8281/10w/notes/110_byte_order_endian.html
+
+4. Briefly describe the mov, push, pusha, pop, and popa instructions in the x86.
+
+mov: move the data from source to destination, in AT&T assembly, mov a, b meaning move the data in position a to position b. 
+push: push its operand onto the top of stack in memory. It first decrements ESP by 4, and then places it operand into the location at ESP.
+pusha: push all the general purpose registers onto the stack, in a particular order: (E)AX, (E)CX, (E)DX, (E)BX, (E)SP, (E)BP, (E)SI, (E)DI.
+pop: removes data element from the top of the stack into its operand.
+popa: remove all the general purpose registers from the stack in a particular order: (E)DI, (E)SI, (E)BP, (E)SP, (E)BX, (E)DX, (E)CX, (E)AX.
+
+reference: http://www.cs.virginia.edu/~evans/cs216/guides/x86.html
+
+5. In a stack frame, local variables are stored below the top of the stack. In task 3, does your result show all the local variables declared in your printtos function? If not, can you explain that? (hint: try to disable the compiler optimization by specifing -O0 in your Makefile)
+
+If the compiler optimization is enabled, I can't find the local variables below the top of the stack, this is maybe because the complier change the position of these variables. But if I disable the compiler optimization, the local variables I defined in printtos.c are stored below the top of stack.
+
