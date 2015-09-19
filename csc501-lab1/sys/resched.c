@@ -4,7 +4,7 @@
 #include <kernel.h>
 #include <proc.h>
 #include <q.h>
-
+#include <stdio.h>
 unsigned long currSP;	/* REAL sp of current process */
 extern int ctxsw(int, int, int, int);
 /*-----------------------------------------------------------------------
@@ -20,66 +20,62 @@ int resched()
 {
 	register struct	pentry	*optr;	/* pointer to old process entry */
 	register struct	pentry	*nptr;	/* pointer to new process entry */
-	optr= &proctab[currpid];
+	optr = &proctab[currpid];
+	optr -> goodness = optr -> goodness - QUANTUM;
+	optr -> counter = optr -> counter - QUANTUM;
 
-	if (optr -> counter >= QUANTUM)
+	if (optr -> counter <= 0)
 	{
-		optr -> goodness = optr -> goodness - QUANTUM;
-		optr -> counter = optr -> counter - QUANTUM;
-	}
-	else
-	{
-		optr -> goodness = optr -> goodness - optr -> counter;
+		optr -> goodness = 0;
 		optr -> counter = 0;
 	}
 
 	int i;
 	int new_epoch = 1;
+	if ( optr -> pstate == PRCURR && optr -> counter > 0)
+	{
+		 new_epoch = 0; //If optr is current and counter > 0, then it's not a new epoch	
+	}
+
 	for ( i = 0; i < NPROC; i++ )
 	{
-		if (proctab[i].pstate == PRREADY && proctab[i].counter != 0)
+		if (proctab[i].pstate == PRREADY && proctab[i].counter > 0)
 		{
-			new_epoch = 0;
+			new_epoch = 0; //If any ready process has a counter > 0, it's not a new epoch
 			break;
 		}
 	}
 	
 
-	if (new_epoch)
+	if (new_epoch) //If it's a new epoch, initiate all the processes not PRFREE
 	{
 		for ( i = 0; i < NPROC; i++ )
-		{
+		{	
 			if (proctab[i].pstate != PRFREE)
 			{	
 				proctab[i].quantum = proctab[i].counter / 2 + proctab[i].pprio;
 				proctab[i].counter = proctab[i].quantum;
 				proctab[i].goodness = proctab[i].counter + proctab[i].pprio;
+				// kprintf("proc %d has quantum %d, counter %d, goodness %d\n", i, proctab[i].quantum, proctab[i].counter, proctab[i].goodness);
 			}
 		}
-		// preempt = QUANTUM;
+		preempt = QUANTUM;
 	}
 
 
-	int  max_goodness = 0, proc_id;
+	int  max_goodness = 0, new_proc = 0;
 	for (i = 0; i < NPROC; i++)
 	{
-		if (proctab[i].goodness > max_goodness)
+		if (proctab[i].goodness > max_goodness && proctab[i].pstate == PRREADY)
 		{
 			max_goodness = proctab[i].goodness;
-			proc_id = i;
+			new_proc = i;
 		}
 	}
 
 	if(( optr -> pstate == PRCURR) && (optr -> goodness >= max_goodness) && (optr -> goodness > 0))
 	{
-		if (optr -> counter < QUANTUM)
-		{
-			preempt = optr -> counter;
-		}
-		else
-		{
-			preempt = QUANTUM;
-		}
+		preempt = QUANTUM;
 		return OK;
 	}
 	else if( optr -> pstate != PRCURR || optr -> goodness == 0 || optr -> goodness < max_goodness )
@@ -89,18 +85,11 @@ int resched()
 			optr -> pstate = PRREADY;
 			insert(currpid, rdyhead, optr -> pprio);
 		}
-		currpid = proc_id;
+		currpid = new_proc;
 		nptr = &proctab[currpid];
 		nptr->pstate = PRCURR;		
 		dequeue(currpid);
-		if (nptr -> counter > QUANTUM)
-		{
-			preempt = QUANTUM;
-		}
-		else
-		{
-			preempt = nptr -> counter;		/* reset preemption counter	*/	
-		}
+		preempt = QUANTUM;
 		ctxsw((int)&optr->pesp, (int)optr->pirmask, (int)&nptr->pesp, (int)nptr->pirmask);
 		return OK;
 	}

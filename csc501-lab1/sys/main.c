@@ -11,12 +11,12 @@ int proc(char c);
 int main() {
     int i;
     int count = 0;
-    char buf[8];
+    // char buf[8];
 
-    for(i = 0; i < 10; i++){
-        srand(i);
-        printf("%d\n", rand());
-    }
+    // for(i = 0; i < 10; i++){
+    //     srand(i);
+    //     printf("%d\n", rand());
+    // }
 
     /* Linux like Scheduler */  
     // setschedclass(LINUXSCHED);
