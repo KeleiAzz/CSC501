@@ -526,4 +526,4 @@ strlen.o: ./../lib/libxc/strlen.c
 strncat.o: ./../lib/libxc/strncat.c
 strncmp.o: ./../lib/libxc/strncmp.c
 strncpy.o: ./../lib/libxc/strncpy.c
-swab.o: ./../lib/
+swab.o: ./../lib/libxc/swab.c
