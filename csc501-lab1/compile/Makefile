@@ -396,7 +396,7 @@ kprintf.o: ./../sys/kprintf.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
 kputc.o: ./../sys/kputc.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/tty.h
 main.o: ./../sys/main.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/stdio.h
+  ../h/mem.h ../h/lab1.h ../h/stdio.h
 mark.o: ./../sys/mark.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/mark.h
 mkpool.o: ./../sys/mkpool.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
@@ -426,7 +426,7 @@ recvclr.o: ./../sys/recvclr.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
 recvtim.o: ./../sys/recvtim.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/proc.h ../h/q.h ../h/sleep.h ../h/stdio.h
 resched.o: ./../sys/resched.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/q.h
+  ../h/mem.h ../h/proc.h ../h/q.h ../h/stdio.h ../h/lab1.h
 resume.o: ./../sys/resume.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/proc.h ../h/stdio.h
 scount.o: ./../sys/scount.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
@@ -526,4 +526,4 @@ strlen.o: ./../lib/libxc/strlen.c
 strncat.o: ./../lib/libxc/strncat.c
 strncmp.o: ./../lib/libxc/strncmp.c
 strncpy.o: ./../lib/libxc/strncpy.c
-swab.o: ./../lib/libxc/swab.c
+swab.o: ./../lib/

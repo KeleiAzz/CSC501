@@ -5,8 +5,11 @@
 #include <proc.h>
 #include <q.h>
 #include <stdio.h>
+#include <lab1.h>
+
 unsigned long currSP;	/* REAL sp of current process */
 extern int ctxsw(int, int, int, int);
+int sched_class = 0;
 /*-----------------------------------------------------------------------
  * resched  --  reschedule processor to highest priority ready process
  *
@@ -17,10 +20,33 @@ extern int ctxsw(int, int, int, int);
  */
 
 int resched()
+{	
+	int state;
+	int schedclass = getschedclass();
+	if (schedclass == LINUXSCHED)
+	{
+		
+		state = linux_resched();
+		return state;
+	}
+	else if (schedclass == MULTIQSCHED)
+	{
+		;
+	}
+	else
+	{	
+		kprintf("Origin resched\n");
+		state = origin_resched();
+		return state;
+	}
+}
+
+int linux_resched()
 {
 	register struct	pentry	*optr;	/* pointer to old process entry */
 	register struct	pentry	*nptr;	/* pointer to new process entry */
 	optr = &proctab[currpid];
+	// kprintf("linux_resched %d\n", currpid);
 	optr -> goodness = optr -> goodness - QUANTUM;
 	optr -> counter = optr -> counter - QUANTUM;
 
@@ -105,19 +131,19 @@ int origin_resched()
 	register struct	pentry	*nptr;	/* pointer to new process entry */
 
 	/* no switch needed if current process priority higher than next*/
-
+	
 	if ( ( (optr= &proctab[currpid])->pstate == PRCURR) &&
 	   (lastkey(rdytail)<optr->pprio)) {
 		return(OK);
 	}
-	
+	kprintf("currpid: %d\n", currpid);
 	/* force context switch */
 
 	if (optr->pstate == PRCURR) {
 		optr->pstate = PRREADY;
 		insert(currpid,rdyhead,optr->pprio);
 	}
-
+	
 	/* remove highest priority process at end of ready list */
 
 	nptr = &proctab[ (currpid = getlast(rdytail)) ];
@@ -125,9 +151,19 @@ int origin_resched()
 #ifdef	RTCLOCK
 	preempt = QUANTUM;		/* reset preemption counter	*/
 #endif
-	
+	kprintf("new currpid: %d\n", currpid);
 	ctxsw((int)&optr->pesp, (int)optr->pirmask, (int)&nptr->pesp, (int)nptr->pirmask);
 	
 	/* The OLD process returns here when resumed. */
 	return OK;
+}
+
+
+void setschedclass(int schedclass)
+{
+	sched_class = schedclass;
+}
+int getschedclass()
+{
+	return sched_class;
 }

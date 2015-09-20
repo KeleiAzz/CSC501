@@ -1,7 +1,9 @@
 #include <conf.h>
 #include <kernel.h>
 // #include <sched.h>
+#include <lab1.h>
 #include <stdio.h>
+
 
 #define LOOP 50
 
@@ -11,7 +13,7 @@ int proc(char c);
 int main() {
     int i;
     int count = 0;
-    // char buf[8];
+    char buf[8];
 
     // for(i = 0; i < 10; i++){
     //     srand(i);
@@ -19,10 +21,11 @@ int main() {
     // }
 
     /* Linux like Scheduler */  
-    // setschedclass(LINUXSCHED);
+    setschedclass(LINUXSCHED);
     resume(prA = create(proc, 2000, 5, "proc A", 1, 'A'));
     resume(prB = create(proc, 2000, 50, "proc B", 1, 'B'));
     resume(prC = create(proc, 2000, 90, "proc C", 1, 'C'));
+    // kprintf("\n %d %d %d\n", prA, prB, prC);
     while (count++ < LOOP) {
         kprintf("M");
         for (i = 0; i < 10000000; i++)
