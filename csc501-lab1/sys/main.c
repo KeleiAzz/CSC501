@@ -15,17 +15,17 @@ int main() {
     int count = 0;
     char buf[8];
 
-    // for(i = 0; i < 10; i++){
-    //     srand(i);
-    //     printf("%d\n", rand());
-    // }
+    for(i = 0; i < 10; i++){
+        srand(i);
+        printf("%d\n", rand());
+    }
 
     /* Linux like Scheduler */  
     setschedclass(LINUXSCHED);
     resume(prA = create(proc, 2000, 5, "proc A", 1, 'A'));
     resume(prB = create(proc, 2000, 50, "proc B", 1, 'B'));
     resume(prC = create(proc, 2000, 90, "proc C", 1, 'C'));
-    // kprintf("\n %d %d %d\n", prA, prB, prC);
+    // kprintf("M");
     while (count++ < LOOP) {
         kprintf("M");
         for (i = 0; i < 10000000; i++)

@@ -63,6 +63,7 @@ struct	pentry	{
 	int goodness;
 	int counter;
 	int quantum;
+	int is_real;
 };
 
 
