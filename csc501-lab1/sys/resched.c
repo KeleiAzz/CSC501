@@ -36,19 +36,33 @@ int resched()
 	int schedclass = getschedclass();
 	if (schedclass == LINUXSCHED)
 	{
-		state = linux_resched();
-		return state;
+		if(linux_resched())
+		{
+			return OK;	
+		}
+		
 	}
 	else if (schedclass == MULTIQSCHED)
 	{
-		state = multiq_resched();
-		return state;
+		if (multiq_resched())
+		{
+			return OK;	
+		}
+		
 	}
 	else
 	{	
 		// kprintf("Origin resched\n");
-		state = origin_resched();
-		return state;
+		kprintf("before %d %d\n", preempt, currpid);
+
+		// state = origin_resched();
+		// kprintf("after %d\n", preempt);
+		if(origin_resched())
+		{
+			// kprintf("OK\n");
+			return OK;	
+		}
+		
 	}
 }
 
@@ -57,9 +71,23 @@ int linux_resched()
 	register struct	pentry	*optr;	/* pointer to old process entry */
 	register struct	pentry	*nptr;	/* pointer to new process entry */
 	optr = &proctab[currpid];
-	// kprintf("linux_resched %d\n", preempt);
-	optr -> goodness = optr -> goodness - QUANTUM + preempt;
-	optr -> counter = optr -> counter - QUANTUM + preempt;
+	int i;
+	if (flag)
+	{
+		kprintf("linux_resched %d %d %d %d\n", preempt, optr -> pstate, currpid, optr -> counter);	
+	}
+	
+	if (optr -> counter >= QUANTUM)
+	{
+		optr -> goodness = optr -> goodness - QUANTUM + preempt;
+		optr -> counter = optr -> counter - QUANTUM + preempt;	
+	}
+	else
+	{
+		optr -> goodness = optr -> goodness - optr -> counter + preempt;
+		optr -> counter = preempt;		
+	}
+	
 
 	if (optr -> counter <= 0)
 	{
@@ -67,9 +95,9 @@ int linux_resched()
 		optr -> counter = 0;
 	}
 
-	int i;
+
 	int new_epoch = 1;
-	if ( optr -> pstate == PRCURR && optr -> counter > 0)
+	if ( optr -> pstate == PRCURR && (optr -> counter > 0))
 	{
 		 new_epoch = 0; //If optr is current and counter > 0, then it's not a new epoch	
 	}
@@ -90,9 +118,14 @@ int linux_resched()
 			break;
 		}
 	}
-
-	if (new_epoch) //If it's a new epoch, initiate all the processes not PRFREE
+	if (new_epoch && flag)
 	{
+		kprintf("new_epoch %d %d %d %d\n", preempt, optr -> pstate, currpid, optr -> counter);
+	}
+	
+	if (new_epoch) //If it's a new epoch, initiate all the processes not PRFREE
+	{	
+		
 		for ( i = 0; i < NPROC; i++ )
 		{	
 			if (proctab[i].pstate != PRFREE)
@@ -110,7 +143,7 @@ int linux_resched()
 			}
 		}
 		preempt = QUANTUM;
-		flag = 0;
+		// flag = 0;
 	}
 
 
@@ -142,6 +175,7 @@ int linux_resched()
 		{
 			preempt = optr -> counter;	
 		}
+		flag = 0;
 		return OK;
 	}
 	else if( optr -> pstate != PRCURR || optr -> goodness == 0 || optr -> goodness < max_goodness )
@@ -162,6 +196,11 @@ int linux_resched()
 		{
 			preempt = nptr -> counter;	
 		}
+		if(flag)
+		{
+			kprintf("switch\n");
+		}
+		flag = 0;
 		ctxsw((int)&optr->pesp, (int)optr->pirmask, (int)&nptr->pesp, (int)nptr->pirmask);
 		return OK;
 	}
@@ -180,7 +219,7 @@ int is_new_epoch(int current_q)
 	register struct	pentry	*optr;
 	optr = &proctab[currpid];
 	int i;
-	if (optr -> pstate == PRCURR && optr -> counter > 0)
+	if (optr -> pstate == PRCURR && optr -> counter > 0 && optr -> is_real == current_q)
 	{
 		return 0;
 	}
@@ -210,6 +249,7 @@ int is_new_epoch(int current_q)
 int is_runnable(int queue_class)
 {
 	int i;
+	if (proctab[currpid].pstate == PRCURR && proctab[currpid].is_real == queue_class) return currpid;
 	for (i = 1; i < NPROC; i++)
 	{
 		if (proctab[i].pstate == PRREADY && proctab[i].is_real == queue_class)
@@ -217,6 +257,7 @@ int is_runnable(int queue_class)
 			return i;
 		}
 	}
+	// for(i = q[rdyhead].qnext; i!=rdytail; i = q[i].qnext) if((proctab[i].is_real == queue_class) && (proctab[i].quantum > 0)) return i;
 	return 0;
 }
 
@@ -242,11 +283,20 @@ int multiq_resched()
 	optr = &proctab[currpid];
 	// int state = 0;
 
-	if ( current_q == NORMALQUEUE )
+	if ( optr -> is_real == 0 && current_q == NORMALQUEUE)
 	{	
 		// state = normalq_resched();
-		optr -> goodness = optr -> goodness - QUANTUM + preempt;
-		optr -> counter = optr -> counter - QUANTUM + preempt;
+		if (optr -> counter > QUANTUM)
+		{
+			optr -> goodness = optr -> goodness - QUANTUM + preempt;
+			optr -> counter = optr -> counter - QUANTUM + preempt;	
+		}
+		else
+		{
+			optr -> goodness = optr -> goodness - optr -> counter + preempt;
+			optr -> counter = preempt;
+		}
+		
 
 		if (optr -> counter <= 0)
 		{
@@ -254,13 +304,14 @@ int multiq_resched()
 			optr -> counter = 0;
 		}
 	}
-	if ( current_q == REALQUEUE)
+	if ( optr -> is_real == 1)
 	{
-		optr -> goodness = optr -> goodness - optr -> counter + preempt;
+		// optr -> goodness = optr -> goodness - optr -> counter + preempt;
 		optr -> counter = preempt;
+
 		if (optr -> counter <= 0)
 		{
-			optr -> goodness = 0;
+			// optr -> goodness = 0;
 			optr -> counter = 0;
 		}
 	}
@@ -270,24 +321,31 @@ int multiq_resched()
 
 	if (runnable_normal == 0 && runnable_real == 0)
 	{
+		// kprintf("switch_to_null\n");
 		return switch_to_null();
+		;
 	}
 
 	new_epoch = is_new_epoch(current_q);
 
+	int flag = 1;
 	if (new_epoch)
 	{
-		int rand_num = rand() % 10;
+		
+		
+		int rand_num = rand()%10;
 		if (rand_num < 7)
 		{
 			if (runnable_real) 
 			{
 				current_q = REALQUEUE;
+				// kprintf(" <7 real\n");
 				return realq_resched(new_epoch);	
 			}
 			else
 			{
 				current_q = NORMALQUEUE;
+				// kprintf(" <7 normal\n");
 				return normalq_resched(new_epoch);
 			}
 			
@@ -297,11 +355,13 @@ int multiq_resched()
 			if (runnable_normal)
 			{
 				current_q = NORMALQUEUE;
+				// kprintf("normal\n");
 				return normalq_resched(new_epoch);
 			}
 			else
 			{
 				current_q = REALQUEUE;
+				// kprintf("real\n");
 				return realq_resched(new_epoch);
 			}
 			
@@ -314,11 +374,13 @@ int multiq_resched()
 			if (runnable_normal)
 			{
 				current_q = NORMALQUEUE;
+				// kprintf("normal normal\n");
 				return normalq_resched(new_epoch);
 			}
 			else
 			{
 				current_q = REALQUEUE;
+				// kprintf("normal -> real\n");
 				return realq_resched(new_epoch);
 			}	
 		}
@@ -327,11 +389,13 @@ int multiq_resched()
 			if (runnable_real) 
 			{
 				current_q = REALQUEUE;
+				// kprintf("real real\n");
 				return realq_resched(new_epoch);	
 			}
 			else
 			{
 				current_q = NORMALQUEUE;
+				// kprintf("real -> normal\n");
 				return normalq_resched(new_epoch);
 			}
 		}
@@ -354,7 +418,7 @@ int realq_resched(int new_epoch)
 			{	
 				proctab[i].quantum = 100;
 				proctab[i].counter = 100;
-				proctab[i].goodness = 100 + proctab[i].pprio;
+				// proctab[i].goodness = 100 + proctab[i].pprio;
 			}
 		}
 		preempt = 100;
@@ -369,19 +433,23 @@ int realq_resched(int new_epoch)
             insert(currpid, rdyhead, optr -> pprio);
         }
 		int i; // choose the next to run.
-        for(i = rdytail; i != rdyhead; i = q[i].qprev) if((proctab[i].is_real == 1) && (proctab[i].quantum > 0)) break;
+        for(i = rdytail; i != rdyhead; i = q[i].qprev) if((proctab[i].is_real == 1) && (proctab[i].counter > 0)) break;
         currpid = i;
         nptr = &proctab[currpid];
         nptr->pstate = PRCURR;
         dequeue(currpid);
-        preempt = nptr -> quantum;
+        preempt = nptr -> counter;
         ctxsw((int)&optr->pesp, (int)optr->pirmask, (int)&nptr->pesp, (int)nptr->pirmask);
         return OK;
 	}
 	else
 	{
-		if((optr->pstate == PRCURR) && (optr->quantum > 0)) return OK;
-		else if ((optr->pstate != PRCURR) || (optr -> quantum <= 0))
+		if((optr->pstate == PRCURR) && (optr->counter > 0))
+		{
+			// kprintf("happens %d %d\n", optr->counter, preempt);
+			return OK;	
+		} 
+		else if ((optr->pstate != PRCURR) || (optr -> counter <= 0))
 		{
 			if(optr -> pstate == PRCURR) // if current proc is running, insert to ready queue
             {
@@ -389,12 +457,12 @@ int realq_resched(int new_epoch)
                 insert(currpid, rdyhead, optr -> pprio);
             }
 			int i; // choose the next to run.
-			for(i = rdytail; i != rdyhead; i = q[i].qprev) if((proctab[i].is_real == 1) && (proctab[i].quantum > 0)) break;
+			for(i = rdytail; i != rdyhead; i = q[i].qprev) if((proctab[i].is_real == 1) && (proctab[i].counter > 0)) break;
 			currpid = i;
 			nptr = &proctab[currpid];
 			nptr->pstate = PRCURR;	
 			dequeue(currpid);
-			preempt = nptr -> quantum;
+			preempt = nptr -> counter;
 			ctxsw((int)&optr->pesp, (int)optr->pirmask, (int)&nptr->pesp, (int)nptr->pirmask);
 			return OK;	
 		}
@@ -429,7 +497,7 @@ int normalq_resched(int new_epoch)
 			}
 		}
 		preempt = QUANTUM;
-		flag = 0;
+		// flag = 0;
 	}
 
 	int  max_goodness = 0, i, new_proc;
@@ -505,6 +573,7 @@ int origin_resched()
 	
 	if ( ( (optr= &proctab[currpid])->pstate == PRCURR) &&
 	   (lastkey(rdytail)<optr->pprio)) {
+	   	kprintf("currpid %d\n", currpid);
 		return(OK);
 	}
 	// kprintf("currpid: %d\n", currpid);
@@ -522,17 +591,22 @@ int origin_resched()
 #ifdef	RTCLOCK
 	preempt = QUANTUM;		/* reset preemption counter	*/
 #endif
-	// kprintf("new currpid: %d\n", currpid);
+	// kprintf("before new currpid: %d\n", currpid);
 	ctxsw((int)&optr->pesp, (int)optr->pirmask, (int)&nptr->pesp, (int)nptr->pirmask);
 	
 	/* The OLD process returns here when resumed. */
+	// kprintf("new currpid: %d\n", currpid);
 	return OK;
 }
 
 
 void setschedclass(int schedclass)
-{
+{	
 	sched_class = schedclass;
+	// kprintf("set\n");
+	resched();
+	// kprintf("sched\n");
+
 }
 int getschedclass()
 {
