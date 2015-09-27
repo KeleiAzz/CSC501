@@ -1,0 +1,34 @@
+Linux scheduling
+Advantage:
+1. This schedule won't cause starvation.
+2. Every process has a chance to run for some time, depending on their priority.
+3. If a process doesn't use up its quantum in an epoch, it may get more quantum in the next epoch as a compensation.
+4. Easy to implement.
+
+Disadvantage:
+1. Process with low priority may only run for a short time and waits for a long time to run again if there are large amount of processes, that means the epoch will become vary long.
+
+=================================
+
+Multi queue scheduling
+Advantage:
+1. Avoid starvation.
+2. For some certain process, we can create it as a real process, it has more chances to run.
+3. For normal processes, every process has a chance to run.
+
+Disadvantage:
+1. Normal process with high priority may not have a higher chance to run compare to real process.
+2. Real processes don't use priority to determine which run first.
+3. Hard to implement.
+4. Too complicated, include a lot of if condition, may take a long time to do the scheduling.
+
+=================================
+
+Original XINU scheduling
+Advantage:
+1. Simple and easy.
+2. Processes with higher priority always have more chance to run.
+
+Disvantage:
+1. Starvation may happen.
+2. Processes with low priority have little chance to run. 
