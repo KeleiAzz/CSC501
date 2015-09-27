@@ -379,7 +379,10 @@ int realq_resched(int new_epoch)
             insert(currpid, rdyhead, optr -> pprio);
         }
 		int i; // choose the next to run.
-        for(i = rdytail; i != rdyhead; i = q[i].qprev) if((proctab[i].is_real == 1) && (proctab[i].counter > 0)) break;
+        for(i = rdytail; i != rdyhead; i = q[i].qprev)
+        {
+        	if(proctab[i].is_real == 1 && proctab[i].counter > 0) break;	
+        } 
         currpid = i;
         nptr = &proctab[currpid];
         nptr->pstate = PRCURR;
@@ -402,7 +405,10 @@ int realq_resched(int new_epoch)
                 insert(currpid, rdyhead, optr -> pprio);
             }
 			int i; // choose the next to run.
-			for(i = rdytail; i != rdyhead; i = q[i].qprev) if((proctab[i].is_real == 1) && (proctab[i].counter > 0)) break;
+			for(i = rdytail; i != rdyhead; i = q[i].qprev)
+			{
+				if(proctab[i].is_real == 1 && proctab[i].counter > 0) break;
+			}
 			currpid = i;
 			nptr = &proctab[currpid];
 			nptr->pstate = PRCURR;	
