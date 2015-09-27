@@ -234,15 +234,16 @@ int is_new_epoch(int current_q)
 	register struct	pentry	*optr;
 	optr = &proctab[currpid];
 	int i;
-	if (optr -> pstate == PRCURR && optr -> counter > 0 && optr -> is_real == current_q)
+	if (optr -> pstate == PRCURR)
 	{
-		return 0;
+		if( optr -> is_real == 0 && optr -> goodness > 0) return 0;
+		if( optr -> is_real == 1 && optr -> counter > 0) return 0;
 	}
 	if (current_q == NORMALQUEUE)
 	{
 		for(i = 0; i < NPROC; i++)
 		{
-			if(proctab[i].pstate == PRREADY && proctab[i].is_real == 0 && proctab[i].counter > 0)
+			if(proctab[i].pstate == PRREADY && proctab[i].is_real == 0 && proctab[i].goodness > 0)
 			{
 				return 0;		
 			}
@@ -351,7 +352,8 @@ int multiq_resched()
 	int flag = 1;
 	if (new_epoch)
 	{
-		int rand_num = rand()%10;
+		int rand_num = rand() % 10;
+		rand_num = rand() % 10;
 		if (rand_num < 7)
 		{
 			if (runnable_real) 
@@ -363,7 +365,7 @@ int multiq_resched()
 			else
 			{
 				current_q = NORMALQUEUE;
-				kprintf(" real -> normal new\n");
+				// kprintf(" real -> normal new\n");
 				return normalq_resched(new_epoch);
 			}
 			
@@ -379,7 +381,7 @@ int multiq_resched()
 			else
 			{
 				current_q = REALQUEUE;
-				kprintf("normal -> real new\n");
+				// kprintf("normal -> real new\n");
 				return realq_resched(new_epoch);
 			}
 			
@@ -398,7 +400,7 @@ int multiq_resched()
 			else
 			{
 				current_q = REALQUEUE;
-				kprintf("normal -> real\n");
+				// kprintf("normal -> real\n");
 				return realq_resched(new_epoch);
 			}	
 		}
@@ -413,7 +415,7 @@ int multiq_resched()
 			else
 			{
 				current_q = NORMALQUEUE;
-				kprintf("real -> normal\n");
+				// kprintf("real -> normal\n");
 				return normalq_resched(new_epoch);
 			}
 		}
@@ -453,7 +455,7 @@ int realq_resched(int new_epoch)
 		int i; // choose the next to run.
         for(i = rdytail; i != rdyhead; i = q[i].qprev) if((proctab[i].is_real == 1) && (proctab[i].counter > 0)) break;
         currpid = i;
-    	if (proctab[currpid].is_real == 0) kprintf("happens\n");
+    	// if (proctab[currpid].is_real == 0) kprintf("happens\n");
         nptr = &proctab[currpid];
         nptr->pstate = PRCURR;
         dequeue(currpid);
@@ -526,8 +528,9 @@ int normalq_resched(int new_epoch)
 		{
 			max_goodness = proctab[i].goodness;
 			new_proc = i;
+			if (proctab[i].is_real == 1) kprintf("happens\n");
 		}
-	} // get the largest goodness in the ready queue
+	} 
 
 	if (optr -> is_real == 1)
 	{
@@ -538,9 +541,16 @@ int normalq_resched(int new_epoch)
         }
         currpid = new_proc;
         nptr = &proctab[currpid];
-        nptr->pstate = PRCURR;          /* mark it currently running    */
+        nptr->pstate = PRCURR;
         dequeue(currpid);
-        preempt = nptr -> counter;              /* reset preemption counter     */
+        if (nptr -> counter >= QUANTUM)
+		{
+			preempt = QUANTUM;
+		}
+		else
+		{
+			preempt = nptr -> counter;	
+		}
         ctxsw((int)&optr->pesp, (int)optr->pirmask, (int)&nptr->pesp, (int)nptr->pirmask);
         return OK;
 	}
@@ -555,10 +565,11 @@ int normalq_resched(int new_epoch)
 			else
 			{
 				preempt = optr -> counter;	
+				// preempt = QUANTUM;
 			}
 			return OK;
 		}
-		else if( optr -> pstate != PRCURR || optr -> goodness == 0 || optr -> goodness < max_goodness )
+		else
 		{
 			if(optr -> pstate == PRCURR)
 			{
