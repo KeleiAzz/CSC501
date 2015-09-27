@@ -396,7 +396,7 @@ kprintf.o: ./../sys/kprintf.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
 kputc.o: ./../sys/kputc.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/tty.h
 main.o: ./../sys/main.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/lab1.h ../h/stdio.h
+  ../h/mem.h ../h/lab1.h ../h/stdio.h ../h/sched.h
 mark.o: ./../sys/mark.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/mark.h
 mkpool.o: ./../sys/mkpool.c ../h/conf.h ../h/kernel.h ../h/systypes.h \

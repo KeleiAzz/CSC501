@@ -1,6 +1,6 @@
 #include <conf.h>
 #include <kernel.h>
-// #include <sched.h>
+#include <sched.h>
 #include <lab1.h>
 #include <stdio.h>
 #include <proc.h>
@@ -168,7 +168,7 @@ int main() {
     prB = createReal(proc_b, 2000, 10, "proc B", 1, 'B');
     resume(prB);
     resume(prA);
-    sleep(10);
+    sleep(5);
     kill(prA);
     kill(prB);
     total_cnt = a_cnt + b_cnt ;
