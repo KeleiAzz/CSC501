@@ -4,13 +4,25 @@
 #include <kernel.h>
 #include <paging.h>
 #include <proc.h>
-
+bs_map_t bsm_tab[MAX_ID];
 /*-------------------------------------------------------------------------
  * init_bsm- initialize bsm_tab
  *-------------------------------------------------------------------------
  */
 SYSCALL init_bsm()
 {
+	int i;
+	for(i = 0; i < NFRAMES; i++)
+  	{
+  		bsm_tab[i].bs_status = BSM_UNMAPPED;
+  		bsm_tab[i].bs_pid = -1;
+  		bsm_tab[i].bs_vpno = -1;
+  		bsm_tab[i].bs_npages = 0;
+  		bsm_tab[i].bs_sem = -1;
+  		bsm_tab[i].private = 0;
+  	}
+
+  	return OK;
 }
 
 /*-------------------------------------------------------------------------
@@ -19,6 +31,15 @@ SYSCALL init_bsm()
  */
 SYSCALL get_bsm(int* avail)
 {
+	int i;
+	for ( i = 0; i < count; ++i)
+	{
+		if(bsm_tab[i].bs_status == BSM_UNMAPPED)
+		{
+			return i
+		}
+		/* code */
+	}
 }
 
 
@@ -28,6 +49,14 @@ SYSCALL get_bsm(int* avail)
  */
 SYSCALL free_bsm(int i)
 {
+	bsm_tab[i].bs_status = BSM_UNMAPPED;
+  	bsm_tab[i].bs_pid = -1;
+  	bsm_tab[i].bs_vpno = -1;
+  	bsm_tab[i].bs_npages = 0;
+  	bsm_tab[i].bs_sem = -1;
+  	bsm_tab[i].private = 0;
+
+  	return OK;
 }
 
 /*-------------------------------------------------------------------------
@@ -36,6 +65,7 @@ SYSCALL free_bsm(int i)
  */
 SYSCALL bsm_lookup(int pid, long vaddr, int* store, int* pageth)
 {
+	
 }
 
 
