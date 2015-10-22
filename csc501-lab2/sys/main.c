@@ -2,7 +2,7 @@
 
 #include <conf.h>
 #include <kernel.h>
-#include <proc.h>
+// #include <proc.h>
 #include <stdio.h>
 #include <paging.h>
 
@@ -15,6 +15,6 @@ void halt();
 int main()
 {
 
-
+	kprintf("haha\n");
 	return 0;
 }

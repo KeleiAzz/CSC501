@@ -32,14 +32,15 @@ SYSCALL init_bsm()
 SYSCALL get_bsm(int* avail)
 {
 	int i;
-	for ( i = 0; i < count; ++i)
+	for ( i = 0; i < NFRAMES; ++i)
 	{
 		if(bsm_tab[i].bs_status == BSM_UNMAPPED)
 		{
-			return i
+			return i;
 		}
 		/* code */
 	}
+  return SYSERR;
 }
 
 
@@ -49,7 +50,7 @@ SYSCALL get_bsm(int* avail)
  */
 SYSCALL free_bsm(int i)
 {
-	bsm_tab[i].bs_status = BSM_UNMAPPED;
+	  bsm_tab[i].bs_status = BSM_UNMAPPED;
   	bsm_tab[i].bs_pid = -1;
   	bsm_tab[i].bs_vpno = -1;
   	bsm_tab[i].bs_npages = 0;
