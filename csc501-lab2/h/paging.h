@@ -74,12 +74,19 @@ SYSCALL release_bs(bsd_t);
 SYSCALL read_bs(char *, bsd_t, int);
 SYSCALL write_bs(char *, bsd_t, int);
 
+int get_frm();
+SYSCALL init_frm();
+
+int createPT(int pid);
+int createPD(int pid);
+int create_global_PT();
+
 #define NBPG		4096	/* number of bytes per page	*/
 #define FRAME0		1024	/* zero-th frame		*/
 
 //default 3072 frames --> 1024+3072=4096=16M
 //#define NFRAMES 	3072	/* number of frames		*/
-#define NFRAMES 	8	/* number of frames		*/
+#define NFRAMES 	1024	/* number of frames		*/
 
 #define BSM_UNMAPPED	0
 #define BSM_MAPPED	1
@@ -94,7 +101,7 @@ SYSCALL write_bs(char *, bsd_t, int);
 #define FIFO		3
 #define GCM		4
 
-#define MAX_ID          9              /* You get 10 mappings, 0 - 9 */
-
-#define BACKING_STORE_BASE	0x00600000
-#define BACKING_STORE_UNIT_SIZE 0x00100000
+#define MAX_ID          15              /* You get 10 mappings, 0 - 9 */
+#define NPGS            128
+#define BACKING_STORE_BASE	0x00800000
+#define BACKING_STORE_UNIT_SIZE 0x00080000

@@ -185,7 +185,15 @@ sysinit()
 	    init_dev(i);
 	}
 #endif
+	init_frm();
+	// kprintf("init frm done\n");
+	set_evec(14, pfintr);
+	create_global_PT();
+	createPD(NULLPROC);
+	// set_PDBR(NULLPROC);
+	write_cr3(proctab[NULLPROC].pdbr);
 
+	enable_paging();
 	pptr = &proctab[NULLPROC];	/* initialize null process entry */
 	pptr->pstate = PRCURR;
 	for (j=0; j<7; j++)

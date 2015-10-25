@@ -95,7 +95,14 @@ SYSCALL create(procaddr,ssize,priority,name,nargs,args)
 	*--saddr = 0;		/* %esi */
 	*--saddr = 0;		/* %edi */
 	*pushsp = pptr->pesp = (unsigned long)saddr;
-
+	
+	pptr -> store = -1;
+	pptr -> vhpno = -1;
+	pptr -> vhpnpages = -1;
+	pptr -> vmemlist = NULL;
+	createPD(pid);
+//	pptr -> pdbr = (unsigned long) frm_tab[avail].fr_vpno * NBPG;
+	// kprintf("%d pid %ld pdbr\n", pid, pptr -> pdbr);
 	restore(ps);
 
 	return(pid);

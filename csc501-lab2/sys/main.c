@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <paging.h>
 
-void halt();
+//void halt();
 
 /*------------------------------------------------------------------------
  *  main  --  user main program
@@ -15,6 +15,6 @@ void halt();
 int main()
 {
 
-
+	kprintf("hello\n");
 	return 0;
 }

@@ -27,6 +27,7 @@ int	resched()
 
 	if ( ( (optr= &proctab[currpid])->pstate == PRCURR) &&
 	   (lastkey(rdytail)<optr->pprio)) {
+//	   	kprintf("not switch\n");
 		restore(PS);
 		return(OK);
 	}
@@ -53,6 +54,14 @@ int	resched()
 	/* remove highest priority process at end of ready list */
 
 	nptr = &proctab[ (currpid = getlast(rdytail)) ];
+	if(currpid < 0)
+	{
+		kprintf("WTF!!!\n");
+	}
+	if(currpid == 49)
+	{
+		kprintf("right!\n");
+	}
 	nptr->pstate = PRCURR;		/* mark it currently running	*/
 #ifdef notdef
 #ifdef	STKCHK
@@ -82,7 +91,8 @@ int	resched()
 #ifdef	DEBUG
 	PrintSaved(nptr);
 #endif
-	
+	set_PDBR(currpid);
+	kprintf("currpid %d\n", currpid);	
 	ctxsw(&optr->pesp, optr->pirmask, &nptr->pesp, nptr->pirmask);
 
 #ifdef	DEBUG
