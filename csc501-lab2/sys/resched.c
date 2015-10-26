@@ -92,7 +92,7 @@ int	resched()
 	PrintSaved(nptr);
 #endif
 	set_PDBR(currpid);
-	kprintf("currpid %d\n", currpid);	
+	// write_cr3(proctab[currpid].pdbr);
 	ctxsw(&optr->pesp, optr->pirmask, &nptr->pesp, nptr->pirmask);
 
 #ifdef	DEBUG

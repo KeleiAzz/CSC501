@@ -16,7 +16,7 @@ SYSCALL init_frm()
   	{
   		frm_tab[i].fr_status = FRM_UNMAPPED;
   		frm_tab[i].fr_pid = -1;
-  		frm_tab[i].fr_vpno = FRAME0 + i;
+  		frm_tab[i].fr_vpno = -1;
   		frm_tab[i].fr_refcnt = 0;
   		frm_tab[i].fr_type = -1;
   		frm_tab[i].fr_dirty = 0;

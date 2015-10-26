@@ -11,7 +11,10 @@
  */
 SYSCALL pfint()
 {
-
+  STATWORD ps;
+  disable(ps);
+  unsigned long cr2 = read_cr2();
+  restore(ps);
   kprintf("To be implemented!\n");
   return OK;
 }

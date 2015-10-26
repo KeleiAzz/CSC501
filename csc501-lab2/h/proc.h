@@ -3,6 +3,7 @@
 #ifndef _PROC_H_
 #define _PROC_H_
 
+#include "paging.h"
 /* process table declarations and defined constants			*/
 
 #ifndef	NPROC				/* set the number of processes	*/
@@ -77,6 +78,7 @@ struct	pentry	{
         int     vhpno;                  /* starting pageno for vheap    */
         int     vhpnpages;              /* vheap size                   */
         struct mblock *vmemlist;        /* vheap list              	*/
+		bs_map_t bs_pid_map[NBS];
 };
 
 

@@ -14,13 +14,34 @@ SYSCALL xmmap(int virtpage, bsd_t source, int npages)
 {
   /* sanity check ! */
 
-  if ( (virtpage < 4096) || ( source < 0 ) || ( source > MAX_ID) ||(npages < 1) || ( npages >200)){
+  if ( (virtpage < 4096) || ( source < 0 ) || ( source > MAX_ID) ||(npages < 1) || ( npages > NPGS)){
 	kprintf("xmmap call error: parameter error! \n");
 	return SYSERR;
   }
-
-  kprintf("xmmap - to be implemented!\n");
-  return SYSERR;
+  STATWORD ps;
+  disable(ps);
+  if(bsm_tab[source].bs_status == BSM_UNMAPPED)
+  {
+    kprintf("This bs %d is empty\n", source);
+    restore(ps);
+    return SYSERR;
+  }
+  if(bsm_tab[source].bs_npages < npages)
+  {
+    kprintf("Not enough space in bs\n");
+    restore(ps);
+    return SYSERR;
+  }
+  if(bsm_map(currpid, virtpage, source, npages) == SYSERR)
+  {
+    kprintf("xmmap. failed bsm_map.\n");
+    restore(ps);
+    return SYSERR;
+  }
+  restore(ps);
+  return OK;
+  // kprintf("xmmap - to be implemented!\n");
+  // return SYSERR;
 }
 
 

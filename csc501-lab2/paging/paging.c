@@ -1,7 +1,9 @@
 #include <conf.h>
 #include <kernel.h>
-#include <paging.h>
 #include <proc.h>
+#include <paging.h>
+
+
 
 int globalPT[4];
 int createPT(int pid)
@@ -53,11 +55,11 @@ int createPD(int pid)
   	frm_tab[*avail].fr_dirty = 0;
   	frm_tab[*avail].fr_loadtime = 0;
     kprintf("create PD for %d, in frame %d\n", pid, *avail);
-  	proctab[pid].pdbr = (unsigned long) frm_tab[*avail].fr_vpno * NBPG;
+  	proctab[pid].pdbr = (unsigned long) (FRAME0 + *avail) * NBPG;
   	int i;
   	for(i = 0; i < 1024; i++)
   	{
-  		pd_t *pde = frm_tab[*avail].fr_vpno * NBPG + i * sizeof(pd_t);
+  		pd_t *pde = proctab[pid].pdbr + i * sizeof(pd_t);
   		pde -> pd_pres = 0;
   		pde -> pd_write = 1;
   		pde -> pd_user = 0;
@@ -85,7 +87,7 @@ int create_global_PT()
 	for(i = 0; i < 4; i++)
 	{
 		frm = createPT(0);
-		globalPT[i] = frm_tab[frm].fr_vpno;
+		globalPT[i] = FRAME0 + frm;
 		for(j = 0; j < 1024; j++)
 		{
 			pt_t *pte = globalPT[i] * NBPG + j * sizeof(pt_t);
@@ -98,9 +100,9 @@ int create_global_PT()
 	return OK;
 }
 
-int set_PDBR(int pid)
+void set_PDBR(int pid)
 {
-  unsigned int pdbr = proctab[pid].pdbr;
-  kprintf("set pdbr for %d, %ld\n", pid, proctab[pid].pdbr);
+  // unsigned int pdbr = proctab[pid].pdbr;
+  // kprintf("set pdbr for %d, %ld\n", pid, proctab[pid].pdbr);
   write_cr3(proctab[pid].pdbr);
 }

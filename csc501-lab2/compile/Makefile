@@ -202,8 +202,8 @@ cominput.o: ./../com/cominput.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
 comintr.o: ./../com/comintr.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/tty.h ../h/com.h ../h/stdio.h
 comoutput.o: ./../com/comoutput.c ../h/conf.h ../h/kernel.h \
-  ../h/systypes.h ../h/mem.h ../h/proc.h ../h/tty.h ../h/com.h \
-  ../h/stdio.h
+  ../h/systypes.h ../h/mem.h ../h/proc.h ../h/paging.h ../h/tty.h \
+  ../h/com.h ../h/stdio.h
 comread.o: ./../com/comread.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/io.h
 lex.yy.o: ./../config/lex.yy.c ../h/stdio.h /usr/include/string.h \
@@ -348,17 +348,17 @@ monudp.o: ./../mon/monudp.c ../h/./mon/monnetwork.h \
   ../h/./mon/moncom.h ../h/./mon/moni386.h ../h/./mon/montftp.h \
   ../h/./mon/monbootp.h ../h/stdio.h
 bsm.o: ./../paging/bsm.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/paging.h ../h/proc.h
+  ../h/mem.h ../h/paging.h ../h/proc.h ../h/paging.h
 control_reg.o: ./../paging/control_reg.c ../h/conf.h ../h/kernel.h \
   ../h/systypes.h ../h/mem.h
 dump32.o: ./../paging/dump32.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h
 frame.o: ./../paging/frame.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/paging.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/paging.h
 get_bs.o: ./../paging/get_bs.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/paging.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/paging.h
 paging.o: ./../paging/paging.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/paging.h ../h/proc.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/paging.h
 pfint.o: ./../paging/pfint.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/paging.h
 policy.o: ./../paging/policy.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
@@ -369,22 +369,22 @@ read_bs.o: ./../paging/read_bs.c ../h/conf.h ../h/kernel.h \
 release_bs.o: ./../paging/release_bs.c ../h/conf.h ../h/kernel.h \
   ../h/systypes.h ../h/mem.h ../h/proc.h ../h/paging.h
 vcreate.o: ./../paging/vcreate.c ../h/conf.h ../h/i386.h ../h/kernel.h \
-  ../h/systypes.h ../h/mem.h ../h/proc.h ../h/sem.h ../h/io.h \
-  ../h/paging.h
+  ../h/systypes.h ../h/mem.h ../h/proc.h ../h/paging.h ../h/sem.h \
+  ../h/io.h ../h/paging.h
 vfreemem.o: ./../paging/vfreemem.c ../h/conf.h ../h/kernel.h \
-  ../h/systypes.h ../h/mem.h ../h/proc.h
-vgetmem.o: ./../paging/vgetmem.c ../h/conf.h ../h/kernel.h \
   ../h/systypes.h ../h/mem.h ../h/proc.h ../h/paging.h
+vgetmem.o: ./../paging/vgetmem.c ../h/conf.h ../h/kernel.h \
+  ../h/systypes.h ../h/mem.h ../h/proc.h ../h/paging.h ../h/paging.h
 write_bs.o: ./../paging/write_bs.c ../h/conf.h ../h/kernel.h \
-  ../h/systypes.h ../h/mem.h ../h/proc.h ../h/mark.h ../h/bufpool.h \
-  ../h/paging.h
+  ../h/systypes.h ../h/mem.h ../h/proc.h ../h/paging.h ../h/mark.h \
+  ../h/bufpool.h
 xm.o: ./../paging/xm.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/paging.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/paging.h
 blkcmp.o: ./../sys/blkcmp.c
 blkequ.o: ./../sys/blkequ.c ../h/kernel.h ../h/systypes.h ../h/conf.h \
   ../h/mem.h
 chprio.o: ./../sys/chprio.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h
+  ../h/mem.h ../h/proc.h ../h/paging.h
 clkinit.o: ./../sys/clkinit.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/sleep.h ../h/i386.h ../h/stdio.h ../h/q.h
 close.o: ./../sys/close.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
@@ -393,11 +393,11 @@ conf.o: ./../sys/conf.c ../h/conf.h
 control.o: ./../sys/control.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/io.h
 create.o: ./../sys/create.c ../h/conf.h ../h/i386.h ../h/kernel.h \
-  ../h/systypes.h ../h/mem.h ../h/proc.h ../h/sem.h ../h/io.h \
-  ../h/paging.h
+  ../h/systypes.h ../h/mem.h ../h/proc.h ../h/paging.h ../h/sem.h \
+  ../h/io.h ../h/paging.h
 evec.o: ./../sys/evec.c ../h/conf.h ../h/i386.h ../h/kernel.h \
-  ../h/systypes.h ../h/mem.h ../h/proc.h ../h/sem.h ../h/tty.h ../h/q.h \
-  ../h/io.h ../h/stdio.h
+  ../h/systypes.h ../h/mem.h ../h/proc.h ../h/paging.h ../h/sem.h \
+  ../h/tty.h ../h/q.h ../h/io.h ../h/stdio.h
 freebuf.o: ./../sys/freebuf.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/mark.h ../h/bufpool.h ../h/stdio.h
 freemem.o: ./../sys/freemem.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
@@ -411,9 +411,9 @@ getitem.o: ./../sys/getitem.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
 getmem.o: ./../sys/getmem.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/stdio.h
 getpid.o: ./../sys/getpid.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h
+  ../h/mem.h ../h/proc.h ../h/paging.h
 getprio.o: ./../sys/getprio.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/stdio.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/stdio.h
 getstk.o: ./../sys/getstk.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/stdio.h
 gettime.o: ./../sys/gettime.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
@@ -425,8 +425,8 @@ i386.o: ./../sys/i386.c ../h/icu.h ../h/i386.h ../h/kernel.h \
 init.o: ./../sys/init.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/io.h
 initialize.o: ./../sys/initialize.c ../h/conf.h ../h/i386.h ../h/kernel.h \
-  ../h/systypes.h ../h/mem.h ../h/proc.h ../h/sem.h ../h/sleep.h \
-  ../h/tty.h ../h/q.h ../h/io.h ../h/paging.h
+  ../h/systypes.h ../h/mem.h ../h/proc.h ../h/paging.h ../h/sem.h \
+  ../h/sleep.h ../h/tty.h ../h/q.h ../h/io.h ../h/paging.h
 insert.o: ./../sys/insert.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/q.h
 insertd.o: ./../sys/insertd.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
@@ -436,13 +436,14 @@ ioerr.o: ./../sys/ioerr.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
 ionull.o: ./../sys/ionull.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h
 kill.o: ./../sys/kill.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/sem.h ../h/io.h ../h/q.h ../h/stdio.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/sem.h ../h/io.h ../h/q.h \
+  ../h/stdio.h
 kprintf.o: ./../sys/kprintf.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/tty.h
 kputc.o: ./../sys/kputc.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/tty.h
 main.o: ./../sys/main.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/stdio.h ../h/paging.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/stdio.h
 mark.o: ./../sys/mark.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/mark.h
 mkpool.o: ./../sys/mkpool.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
@@ -452,7 +453,7 @@ newqueue.o: ./../sys/newqueue.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
 open.o: ./../sys/open.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/io.h
 panic.o: ./../sys/panic.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/stdio.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/stdio.h
 pci.o: ./../sys/pci.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/pci.h ../h/stdio.h
 poolinit.o: ./../sys/poolinit.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
@@ -464,58 +465,58 @@ queue.o: ./../sys/queue.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
 read.o: ./../sys/read.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/io.h
 ready.o: ./../sys/ready.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/q.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/q.h
 receive.o: ./../sys/receive.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/stdio.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/stdio.h
 recvclr.o: ./../sys/recvclr.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/stdio.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/stdio.h
 recvtim.o: ./../sys/recvtim.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/q.h ../h/sleep.h ../h/stdio.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/q.h ../h/sleep.h ../h/stdio.h
 resched.o: ./../sys/resched.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/q.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/q.h
 resume.o: ./../sys/resume.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/stdio.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/stdio.h
 scount.o: ./../sys/scount.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/sem.h
 screate.o: ./../sys/screate.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/q.h ../h/sem.h ../h/stdio.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/q.h ../h/sem.h ../h/stdio.h
 sdelete.o: ./../sys/sdelete.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/q.h ../h/sem.h ../h/stdio.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/q.h ../h/sem.h ../h/stdio.h
 send.o: ./../sys/send.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/stdio.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/stdio.h
 setdev.o: ./../sys/setdev.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h
+  ../h/mem.h ../h/proc.h ../h/paging.h
 setnok.o: ./../sys/setnok.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/stdio.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/stdio.h
 signal.o: ./../sys/signal.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/q.h ../h/sem.h ../h/stdio.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/q.h ../h/sem.h ../h/stdio.h
 signaln.o: ./../sys/signaln.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/q.h ../h/sem.h ../h/stdio.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/q.h ../h/sem.h ../h/stdio.h
 sleep1000.o: ./../sys/sleep1000.c ../h/conf.h ../h/kernel.h \
-  ../h/systypes.h ../h/mem.h ../h/proc.h ../h/q.h ../h/sleep.h \
-  ../h/stdio.h
+  ../h/systypes.h ../h/mem.h ../h/proc.h ../h/paging.h ../h/q.h \
+  ../h/sleep.h ../h/stdio.h
 sleep100.o: ./../sys/sleep100.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/q.h ../h/sleep.h ../h/stdio.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/q.h ../h/sleep.h ../h/stdio.h
 sleep10.o: ./../sys/sleep10.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/q.h ../h/sleep.h ../h/stdio.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/q.h ../h/sleep.h ../h/stdio.h
 sleep.o: ./../sys/sleep.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/q.h ../h/sleep.h ../h/stdio.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/q.h ../h/sleep.h ../h/stdio.h
 sreset.o: ./../sys/sreset.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/q.h ../h/sem.h ../h/stdio.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/q.h ../h/sem.h ../h/stdio.h
 ssclock.o: ./../sys/ssclock.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/q.h ../h/sleep.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/q.h ../h/sleep.h
 stacktrace.o: ./../sys/stacktrace.c ../h/conf.h ../h/kernel.h \
-  ../h/systypes.h ../h/mem.h ../h/proc.h ../h/stdio.h
+  ../h/systypes.h ../h/mem.h ../h/proc.h ../h/paging.h ../h/stdio.h
 suspend.o: ./../sys/suspend.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/q.h ../h/stdio.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/q.h ../h/stdio.h
 unsleep.o: ./../sys/unsleep.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/q.h ../h/sleep.h ../h/stdio.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/q.h ../h/sleep.h ../h/stdio.h
 userret.o: ./../sys/userret.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h
 wait.o: ./../sys/wait.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/q.h ../h/sem.h ../h/stdio.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/q.h ../h/sem.h ../h/stdio.h
 wakeup.o: ./../sys/wakeup.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/q.h ../h/sleep.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/q.h ../h/sleep.h
 write.o: ./../sys/write.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/io.h
 xdone.o: ./../sys/xdone.c ../h/kernel.h ../h/systypes.h ../h/conf.h \

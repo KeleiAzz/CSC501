@@ -7,7 +7,7 @@
 #include <sem.h>
 #include <mem.h>
 #include <io.h>
-#include <paging.h>
+// #include <paging.h>
 
 LOCAL int newpid();
 
@@ -100,6 +100,16 @@ SYSCALL create(procaddr,ssize,priority,name,nargs,args)
 	pptr -> vhpno = -1;
 	pptr -> vhpnpages = -1;
 	pptr -> vmemlist = NULL;
+	for(i = 0; i < NBS; i ++)
+    {
+        pptr -> bs_pid_map[i].bs_status = BSM_UNMAPPED;
+        pptr -> bs_pid_map[i].bs_pid = -1;
+        pptr -> bs_pid_map[i].bs_vpno = -1;
+        pptr -> bs_pid_map[i].bs_npages = 0;
+        pptr -> bs_pid_map[i].bs_sem = -1;
+        pptr -> bs_pid_map[i].private = 0;
+        // pptr -> bs_pid_map[i].bs_ref = 0;
+    }
 	createPD(pid);
 //	pptr -> pdbr = (unsigned long) frm_tab[avail].fr_vpno * NBPG;
 	// kprintf("%d pid %ld pdbr\n", pid, pptr -> pdbr);

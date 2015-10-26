@@ -1,4 +1,7 @@
 /* paging.h */
+#ifndef _PAGING_H_
+#define _PAGING_H_
+
 
 typedef unsigned int	 bsd_t;
 
@@ -48,6 +51,8 @@ typedef struct{
   int bs_vpno;				/* starting virtual page number */
   int bs_npages;			/* number of pages in the store */
   int bs_sem;				/* semaphore mechanism ?	*/
+
+  int private;
 } bs_map_t;
 
 typedef struct{
@@ -101,7 +106,9 @@ int create_global_PT();
 #define FIFO		3
 #define GCM		4
 
+#define NBS             16
 #define MAX_ID          15              /* You get 10 mappings, 0 - 9 */
 #define NPGS            128
 #define BACKING_STORE_BASE	0x00800000
 #define BACKING_STORE_UNIT_SIZE 0x00080000
+#endif

@@ -209,6 +209,16 @@ sysinit()
 	pptr->paddr = (WORD) nulluser;
 	pptr->pargs = 0;
 	pptr->pprio = 0;
+	for(i = 0; i < NBS; i ++)
+    {
+        pptr -> bs_pid_map[i].bs_status = BSM_UNMAPPED;
+        pptr -> bs_pid_map[i].bs_pid = -1;
+        pptr -> bs_pid_map[i].bs_vpno = -1;
+        pptr -> bs_pid_map[i].bs_npages = 0;
+        pptr -> bs_pid_map[i].bs_sem = -1;
+        pptr -> bs_pid_map[i].private = 0;
+        // pptr -> bs_pid_map[i].bs_ref = 0;
+    }
 	currpid = NULLPROC;
 
 	for (i=0 ; i<NSEM ; i++) {	/* initialize semaphores */
