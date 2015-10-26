@@ -24,7 +24,7 @@ int createPT(int pid)
     int i;
   	for(i = 0; i < 1024; i++)
   	{
-  		pt_t *pte = frm_tab[*avail].fr_vpno * NBPG + i * sizeof(pt_t);
+  		pt_t *pte = (*avail + FRAME0) * NBPG + i * sizeof(pt_t);
   		pte -> pt_pres = 0;
   		pte -> pt_write = 1;
   		pte -> pt_user = 0;
@@ -98,6 +98,15 @@ int create_global_PT()
 		}
 	}
 	return OK;
+}
+
+int get_PD(int vaddr)
+{
+  return vaddr >> 22;
+}
+int get_PT(int vaddr)
+{
+  return (vaddr >> 12) & 0x000003ff;
 }
 
 void set_PDBR(int pid)

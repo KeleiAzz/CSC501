@@ -92,7 +92,23 @@ SYSCALL free_bsm(int i)
  */
 SYSCALL bsm_lookup(int pid, long vaddr, int* store, int* pageth)
 {
-	
+	int  vpno = ((unsigned long)vaddr)>>12;
+  int vv = (vaddr/4096) & 0x000fffff;
+  kprintf("%d bsm_lookup vpno %d\n", vpno, vv);
+  int i;
+  for(i = 0; i < NBS; i++)
+  {
+    if(proctab[pid].bs_pid_map[i].bs_status == BSM_MAPPED && proctab[pid].bs_pid_map[i].bs_vpno <= vpno && proctab[pid].bs_pid_map[i].bs_vpno + proctab[pid].bs_pid_map[i].bs_npages > vpno)
+    {
+      *store = i;
+      *pageth = vpno - proctab[pid].bs_pid_map[i].bs_vpno;
+      return OK;
+    }
+  }
+  *store = -1;
+  *pageth = -1;
+  return SYSERR;
+
 }
 
 

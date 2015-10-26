@@ -41,6 +41,7 @@ SYSCALL get_frm(int* avail)
 		if(frm_tab[i].fr_status == FRM_UNMAPPED)
 		{
 			*avail = i;
+      kprintf("got frame %d\n", i);
       return i;
 		} /* code */
 	}
