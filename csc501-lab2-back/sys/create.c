@@ -101,8 +101,10 @@ SYSCALL create(procaddr,ssize,priority,name,nargs,args)
 	pptr -> vhpnpages = -1;
 	pptr -> vmemlist = NULL;
 
-	int avail = createPD(pid);
-	pptr -> pdbr = (unsigned long) frm_tab[avail].fr_vpno * NBPG;
+	createPD(pid);
+//	pptr -> pdbr = (unsigned long) frm_tab[avail].fr_vpno * NBPG;
+	kprintf(" %d %ld create\n", pid, pptr -> pdbr);
+
 
 	restore(ps);
 

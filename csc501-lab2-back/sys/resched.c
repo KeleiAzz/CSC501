@@ -53,6 +53,10 @@ int	resched()
 	/* remove highest priority process at end of ready list */
 
 	nptr = &proctab[ (currpid = getlast(rdytail)) ];
+	if(currpid < 0)
+	{
+		kprintf("WTF!!!!");
+	}
 	nptr->pstate = PRCURR;		/* mark it currently running	*/
 #ifdef notdef
 #ifdef	STKCHK
@@ -82,6 +86,7 @@ int	resched()
 #ifdef	DEBUG
 	PrintSaved(nptr);
 #endif
+//	kprintf("%d currpid\n", currpid);
 	set_PDBR(currpid);
 	ctxsw(&optr->pesp, optr->pirmask, &nptr->pesp, nptr->pirmask);
 

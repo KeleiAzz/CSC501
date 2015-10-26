@@ -11,6 +11,7 @@ int createPT(int pid)
 	{
 		return -1;
 	}
+	kprintf("%d frm PT\n", *avail);
 	frm_tab[*avail].fr_status = FRM_MAPPED;
 	frm_tab[*avail].fr_pid = pid;
   	// frm_tab[*avail].fr_vpno = FRAME0 + i;
@@ -44,6 +45,7 @@ int createPD(int pid)
 	{
 		return -1;
 	}
+	kprintf("%d %d %d frm PD\n", *avail, pid, frm_tab[*avail].fr_vpno);
 	frm_tab[*avail].fr_status = FRM_MAPPED;
 	frm_tab[*avail].fr_pid = pid;
   	// frm_tab[*avail].fr_vpno = FRAME0 + i;
@@ -99,6 +101,13 @@ int create_global_PT()
 
 int set_PDBR(int pid)
 {
-  unsigned int pdbr = proctab[pid].pdbr;
+  // unsigned int pdbr = proctab[pid].pdbr/NBPG;
+  kprintf("%d %ld set pdbr for\n", pid, proctab[pid].pdbr);
+  if( pid < 0)
+  {
+    kprintf("pid error");
+    return -1;
+  }
   write_cr3(proctab[pid].pdbr);
+  
 }

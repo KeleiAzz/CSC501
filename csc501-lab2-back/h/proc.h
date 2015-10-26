@@ -8,7 +8,7 @@
 /* process table declarations and defined constants			*/
 
 #ifndef	NPROC				/* set the number of processes	*/
-#define	NPROC		30		/*  allowed if not already done	*/
+#define	NPROC		50		/*  allowed if not already done	*/
 #endif
 
 #ifndef	_NFILE

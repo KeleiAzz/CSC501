@@ -186,24 +186,24 @@ sysinit()
 	}
 #endif
 	// kprintf("init bsm\n");
-	// // init_bsm();
+	init_bsm();
 	// kprintf("init bsm finished\n");
 
 	// kprintf("init frm\n");
-	// // init_frm();
+	init_frm();
 	// kprintf("init frm finished\n");
 
 	// kprintf("init global pt\n");
-	// // create_global_PT();
+	create_global_PT();
 	// kprintf("init global pt finished\n");
 	
-	// // set_evec(14, pfintr);
+	//set_evec(14, pfintr);
 	// kprintf("set evec finished\n");
-	// // createPD(NULLPROC);
+	createPD(NULLPROC);
 	// kprintf("create pd for null finished\n");
-	// // set_PDBR(NULLPROC);
+	set_PDBR(NULLPROC);
 	// kprintf("set pdbr for null finished\n");
-	// // enable_paging();
+//	enable_paging();
 	// kprintf("enable_paging finished\n");
 
 	pptr = &proctab[NULLPROC];	/* initialize null process entry */
@@ -222,10 +222,10 @@ sysinit()
 	pptr->pargs = 0;
 	pptr->pprio = 0;
 
-	// pptr -> store = -1;
-	// pptr -> vhpno = -1;
-	// pptr -> vhpnpages = -1;
-	// pptr -> vmemlist = NULL;
+	pptr -> store = -1;
+	pptr -> vhpno = -1;
+	pptr -> vhpnpages = -1;
+	pptr -> vmemlist = NULL;
 	
 	currpid = NULLPROC;
 
@@ -236,7 +236,6 @@ sysinit()
 
 	rdytail = 1 + (rdyhead=newqueue());/* initialize ready list */
 
-	// kprintf('return\n');
 	return(OK);
 }
 
