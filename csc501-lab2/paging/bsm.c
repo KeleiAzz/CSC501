@@ -22,33 +22,9 @@ SYSCALL init_bsm()
   		bsm_tab[i].bs_sem = -1;
   		bsm_tab[i].private = 0;
   	}
-    // bs_pid_map[0] = 2;
-    // int j;
-    // for(i = 1; i < NPROC; i++)
-    // {
-    //   j = bs_pid_map[i-1] + 1;
-    //   while(1)
-    //   {
-    //     if(is_prime(j))
-    //     {
-    //       bs_pid_map[i] = j;
-    //       break;
-    //     }
-    //     else j++;
-    //   }
-    // }
+
   	return OK;
 }
-
-// int is_prime(int n)
-// {
-//   int i;
-//   for(i = 2; i < n; i++)
-//   {
-//     if(n % i == 0) return 0;
-//   }
-//   return 1;
-// }
 
 /*-------------------------------------------------------------------------
  * get_bsm - get a free entry from bsm_tab 
@@ -98,7 +74,9 @@ SYSCALL bsm_lookup(int pid, long vaddr, int* store, int* pageth)
   int i;
   for(i = 0; i < NBS; i++)
   {
-    if(proctab[pid].bs_pid_map[i].bs_status == BSM_MAPPED && proctab[pid].bs_pid_map[i].bs_vpno <= vpno && proctab[pid].bs_pid_map[i].bs_vpno + proctab[pid].bs_pid_map[i].bs_npages > vpno)
+    if(proctab[pid].bs_pid_map[i].bs_status == BSM_MAPPED && \
+      proctab[pid].bs_pid_map[i].bs_vpno <= vpno && \
+      proctab[pid].bs_pid_map[i].bs_vpno + proctab[pid].bs_pid_map[i].bs_npages > vpno)
     {
       *store = i;
       *pageth = vpno - proctab[pid].bs_pid_map[i].bs_vpno;
@@ -118,11 +96,7 @@ SYSCALL bsm_lookup(int pid, long vaddr, int* store, int* pageth)
  */
 SYSCALL bsm_map(int pid, int vpno, int source, int npages)
 {
-  if(vpno < 4096)
-  {
-    return SYSERR;
-  }
-  if(source < 0 || source > MAX_ID || npages < 0 || npages > NPGS)
+  if(vpno < 4096 || source < 0 || source > MAX_ID || npages < 0 || npages > NPGS)
   {
     return SYSERR;
   }
@@ -130,14 +104,26 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages)
   {
     bsm_tab[source].bs_status = BSM_MAPPED;
     bsm_tab[source].bs_npages = npages;
+    proctab[pid].bs_pid_map[source].bs_status = BSM_MAPPED;
+    proctab[pid].bs_pid_map[source].bs_pid = pid;
+    proctab[pid].bs_pid_map[source].bs_vpno = vpno;
+    proctab[pid].bs_pid_map[source].bs_npages = npages;
+    proctab[pid].bs_pid_map[source].bs_sem = -1;
+    proctab[pid].bs_pid_map[source].private = 0;
+    return OK;
     // bsm_tab[source].pid *= bs_pid_map[pid];
   }
-  proctab[pid].bs_pid_map[source].bs_status = BSM_MAPPED;
-  proctab[pid].bs_pid_map[source].bs_pid = pid;
-  proctab[pid].bs_pid_map[source].bs_vpno = vpno;
-  proctab[pid].bs_pid_map[source].bs_npages = npages;
-  proctab[pid].bs_pid_map[source].bs_sem = -1;
-  proctab[pid].bs_pid_map[source].private = 0;
+  else if(bsm_tab[source].bs_status == BSM_MAPPED && bsm_tab[source].private == 0 && proctab[pid].bs_pid_map[source].bs_pid != pid)
+  { //If this bsm is mapped by other process but is not private heap, and haven't mapped by pid, still can be mapped
+    proctab[pid].bs_pid_map[source].bs_status = BSM_MAPPED;
+    proctab[pid].bs_pid_map[source].bs_pid = pid;
+    proctab[pid].bs_pid_map[source].bs_vpno = vpno;
+    proctab[pid].bs_pid_map[source].bs_npages = npages;
+    proctab[pid].bs_pid_map[source].bs_sem = -1;
+    proctab[pid].bs_pid_map[source].private = 0;
+  }
+  else return SYSERR;
+  
   // proctab[pid].bs_pid_map[source].bs_ref = 0;
 
 }
@@ -150,6 +136,19 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages)
  */
 SYSCALL bsm_unmap(int pid, int vpno, int flag)
 {
+  if(vpno < 4096)
+  {
+    return SYSERR;
+  }
+  int *store, *pageth;
+  if(bsm_lookup(pid, vpno * NPGS, store, pageth) == SYSERR)
+  {
+    //no mapping to vpno for pid
+    return SYSERR;
+  }
+  
+
+
 }
 
 
