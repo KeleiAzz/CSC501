@@ -360,7 +360,7 @@ get_bs.o: ./../paging/get_bs.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
 paging.o: ./../paging/paging.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/proc.h ../h/paging.h ../h/paging.h
 pfint.o: ./../paging/pfint.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/paging.h
+  ../h/mem.h ../h/paging.h ../h/proc.h ../h/paging.h
 policy.o: ./../paging/policy.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/paging.h
 read_bs.o: ./../paging/read_bs.c ../h/conf.h ../h/kernel.h \
@@ -394,7 +394,7 @@ control.o: ./../sys/control.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/io.h
 create.o: ./../sys/create.c ../h/conf.h ../h/i386.h ../h/kernel.h \
   ../h/systypes.h ../h/mem.h ../h/proc.h ../h/paging.h ../h/sem.h \
-  ../h/io.h ../h/paging.h
+  ../h/io.h
 evec.o: ./../sys/evec.c ../h/conf.h ../h/i386.h ../h/kernel.h \
   ../h/systypes.h ../h/mem.h ../h/proc.h ../h/paging.h ../h/sem.h \
   ../h/tty.h ../h/q.h ../h/io.h ../h/stdio.h
@@ -443,7 +443,7 @@ kprintf.o: ./../sys/kprintf.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
 kputc.o: ./../sys/kputc.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/tty.h
 main.o: ./../sys/main.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
-  ../h/mem.h ../h/proc.h ../h/paging.h ../h/stdio.h
+  ../h/mem.h ../h/proc.h ../h/paging.h ../h/stdio.h ../h/paging.h
 mark.o: ./../sys/mark.c ../h/conf.h ../h/kernel.h ../h/systypes.h \
   ../h/mem.h ../h/mark.h
 mkpool.o: ./../sys/mkpool.c ../h/conf.h ../h/kernel.h ../h/systypes.h \

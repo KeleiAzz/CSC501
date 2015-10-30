@@ -100,7 +100,7 @@ SYSCALL create(procaddr,ssize,priority,name,nargs,args)
 	pptr -> vhpno = -1;
 	pptr -> vhpnpages = -1;
 	pptr -> vmemlist = NULL;
-	for(i = 0; i < NBS; i ++)
+	for(i = 0; i <= MAX_ID; i ++)
     {
         pptr -> bs_pid_map[i].bs_status = BSM_UNMAPPED;
         pptr -> bs_pid_map[i].bs_pid = -1;

@@ -106,7 +106,7 @@ int create_global_PT();
 #define FIFO		3
 #define GCM		4
 
-#define NBS             16
+// #define NBS             16
 #define MAX_ID          15              /* You get 10 mappings, 0 - 9 */
 #define NPGS            128
 #define BACKING_STORE_BASE	0x00800000

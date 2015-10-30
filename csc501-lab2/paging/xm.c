@@ -57,8 +57,11 @@ SYSCALL xmunmap(int virtpage )
 	kprintf("xmummap call error: virtpage (%d) invalid! \n", virtpage);
 	return SYSERR;
   }
-
-  kprintf("To be implemented!");
-  return SYSERR;
+  if(bsm_unmap(currpid, virtpage, 0) == SYSERR)
+  {
+    kprintf("unmap failed\n");  
+    return SYSERR;
+  }
+  else return OK;
 }
 

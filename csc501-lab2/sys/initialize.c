@@ -209,7 +209,7 @@ sysinit()
 	pptr->paddr = (WORD) nulluser;
 	pptr->pargs = 0;
 	pptr->pprio = 0;
-	for(i = 0; i < NBS; i ++)
+	for(i = 0; i <= MAX_ID; i ++)
     {
         pptr -> bs_pid_map[i].bs_status = BSM_UNMAPPED;
         pptr -> bs_pid_map[i].bs_pid = -1;

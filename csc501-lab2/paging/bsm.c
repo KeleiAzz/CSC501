@@ -4,7 +4,7 @@
 #include <kernel.h>
 #include <paging.h>
 #include <proc.h>
-bs_map_t bsm_tab[NBS];
+bs_map_t bsm_tab[MAX_ID+1];
 // int bs_pid_map[NPROC];
 /*-------------------------------------------------------------------------
  * init_bsm- initialize bsm_tab
@@ -13,7 +13,7 @@ bs_map_t bsm_tab[NBS];
 SYSCALL init_bsm()
 {
 	int i;
-	for(i = 0; i < NBS; i++)
+	for(i = 0; i <= MAX_ID; i++)
   	{
   		bsm_tab[i].bs_status = BSM_UNMAPPED;
   		bsm_tab[i].bs_pid = 1;
@@ -33,7 +33,7 @@ SYSCALL init_bsm()
 SYSCALL get_bsm(int* avail)
 {
 	int i;
-	for ( i = 0; i < NBS; ++i)
+	for ( i = 0; i <= MAX_ID; ++i)
 	{
 		if(bsm_tab[i].bs_status == BSM_UNMAPPED)
 		{
@@ -72,14 +72,14 @@ SYSCALL bsm_lookup(int pid, long vaddr, int* store, int* pageth)
   int vv = (vaddr/4096) & 0x000fffff;
   kprintf("%d bsm_lookup vpno %d\n", vpno, vv);
   int i;
-  for(i = 0; i < NBS; i++)
+  for(i = 0; i <= MAX_ID; i++)
   {
-    if(proctab[pid].bs_pid_map[i].bs_status == BSM_MAPPED && \
-      proctab[pid].bs_pid_map[i].bs_vpno <= vpno && \
-      proctab[pid].bs_pid_map[i].bs_vpno + proctab[pid].bs_pid_map[i].bs_npages > vpno)
+    if(proctab[pid].bs_pid_map[i].bs_status == BSM_MAPPED && proctab[pid].bs_pid_map[i].bs_vpno <= vpno && proctab[pid].bs_pid_map[i].bs_vpno + proctab[pid].bs_pid_map[i].bs_npages > vpno)
     {
       *store = i;
       *pageth = vpno - proctab[pid].bs_pid_map[i].bs_vpno;
+      // kprintf("bsm_lookup successful, store: %d, pageth: %d %d \n", *store, *pageth, i);
+      // kprintf("%d %d %d %d \n",proctab[pid].bs_pid_map[0].bs_status, proctab[pid].bs_pid_map[1].bs_status,proctab[pid].bs_pid_map[2].bs_status,proctab[pid].bs_pid_map[3].bs_status);
       return OK;
     }
   }
@@ -98,6 +98,7 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages)
 {
   if(vpno < 4096 || source < 0 || source > MAX_ID || npages < 0 || npages > NPGS)
   {
+    kprintf("failed in first if\n");
     return SYSERR;
   }
   if(bsm_tab[source].bs_status == BSM_UNMAPPED)
@@ -110,10 +111,11 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages)
     proctab[pid].bs_pid_map[source].bs_npages = npages;
     proctab[pid].bs_pid_map[source].bs_sem = -1;
     proctab[pid].bs_pid_map[source].private = 0;
+    kprintf("bsm map successful, pid: %d, vpno: %d source %d npages: %d\n", pid, vpno, source, npages);
     return OK;
     // bsm_tab[source].pid *= bs_pid_map[pid];
   }
-  else if(bsm_tab[source].bs_status == BSM_MAPPED && bsm_tab[source].private == 0 && proctab[pid].bs_pid_map[source].bs_pid != pid)
+  else if(bsm_tab[source].bs_status == BSM_MAPPED && bsm_tab[source].private == 0)
   { //If this bsm is mapped by other process but is not private heap, and haven't mapped by pid, still can be mapped
     proctab[pid].bs_pid_map[source].bs_status = BSM_MAPPED;
     proctab[pid].bs_pid_map[source].bs_pid = pid;
@@ -121,8 +123,15 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages)
     proctab[pid].bs_pid_map[source].bs_npages = npages;
     proctab[pid].bs_pid_map[source].bs_sem = -1;
     proctab[pid].bs_pid_map[source].private = 0;
+    kprintf(" bsm map successful, pid: %d, vpno: %d source %d npages: %d\n", pid, vpno, source, npages);
+    return OK;
   }
-  else return SYSERR;
+  else 
+  {
+    kprintf("failed in the last else %d %d %d\n", bsm_tab[source].bs_status, bsm_tab[source].private, proctab[pid].bs_pid_map[source].bs_pid);
+    return SYSERR;  
+  }
+  
   
   // proctab[pid].bs_pid_map[source].bs_ref = 0;
 
@@ -141,11 +150,24 @@ SYSCALL bsm_unmap(int pid, int vpno, int flag)
     return SYSERR;
   }
   int *store, *pageth;
-  if(bsm_lookup(pid, vpno * NPGS, store, pageth) == SYSERR)
+  kprintf("In bsm_unmap, pid: %d vpno: %d, vaddr: %d\n", pid, vpno, vpno*NBPG);
+  if(bsm_lookup(pid, vpno * NBPG, store, pageth) == SYSERR)
   {
     //no mapping to vpno for pid
+    kprintf("no mapping to vpno %d for pid %d\n", vpno, pid);
     return SYSERR;
   }
+  else
+  {
+    proctab[pid].bs_pid_map[*store].bs_status = BSM_UNMAPPED;
+    proctab[pid].bs_pid_map[*store].bs_pid = -1;
+    proctab[pid].bs_pid_map[*store].bs_vpno = -1;
+    proctab[pid].bs_pid_map[*store].bs_npages = 0;
+    proctab[pid].bs_pid_map[*store].bs_sem = -1;
+    proctab[pid].bs_pid_map[*store].private = 0; 
+    return OK;
+  }
+
   
 
 
