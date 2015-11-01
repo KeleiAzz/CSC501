@@ -6,7 +6,7 @@
 SYSCALL release_bs(bsd_t bs_id) {
 
   /* release the backing store with ID bs_id */
-	if(bsm_tab[bs_id].bs_status == BSM_MAPPED)
+	if(bsm_tab[bs_id].bs_status == BSM_MAPPED && bsm_tab[bs_id].bs_num_proc == 0)
 	{
 		bsm_tab[bs_id].bs_status = BSM_UNMAPPED;
   		bsm_tab[bs_id].bs_pid = 1;
@@ -19,7 +19,7 @@ SYSCALL release_bs(bsd_t bs_id) {
 	}
 	else
 	{
-		kprintf("this bs %d is not mapped\n", bs_id);
+		kprintf("this bs %d is not mapped or there are processes mapped to this bs\n", bs_id);
 		return SYSERR;
 	}
    

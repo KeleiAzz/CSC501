@@ -53,6 +53,7 @@ typedef struct{
   int bs_sem;				/* semaphore mechanism ?	*/
 
   int private;
+  int bs_num_proc; // num of process using this bs
 } bs_map_t;
 
 typedef struct{

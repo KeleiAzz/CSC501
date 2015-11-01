@@ -54,14 +54,14 @@ int	resched()
 	/* remove highest priority process at end of ready list */
 
 	nptr = &proctab[ (currpid = getlast(rdytail)) ];
-	if(currpid < 0)
-	{
-		kprintf("WTF!!!\n");
-	}
-	if(currpid == 49)
-	{
-		kprintf("right!\n");
-	}
+	// if(currpid < 0)
+	// {
+	// 	kprintf("WTF!!!\n");
+	// }
+	// if(currpid == 49)
+	// {
+	// 	kprintf("right!\n");
+	// }
 	nptr->pstate = PRCURR;		/* mark it currently running	*/
 #ifdef notdef
 #ifdef	STKCHK
