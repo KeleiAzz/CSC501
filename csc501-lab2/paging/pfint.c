@@ -21,6 +21,7 @@ SYSCALL pfint()
   int store, pageth;
   if(bsm_lookup(currpid, cr2, &store, &pageth) == SYSERR)
   {
+    // kprintf("bsm_lookup failed\n");
   	kill(currpid);
   	restore(ps);
   	return SYSERR;
@@ -68,7 +69,7 @@ SYSCALL pfint()
   pte -> pt_dirty = 1;
   pte -> pt_base = avail + FRAME0;
   frm_tab[(unsigned int)pte/NBPG - FRAME0].fr_refcnt ++;
-  
+  kprintf("page fault handled!\n");
   write_cr3(proctab[currpid].pdbr);
   
   restore(ps);

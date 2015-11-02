@@ -93,7 +93,7 @@ SYSCALL bsm_lookup(int pid, long vaddr, int* store, int* pageth)
   }
   *store = -1;
   *pageth = -1;
-  // if(pid == 47) kprintf("bsm lookup failed\n");
+  kprintf("bsm lookup failed %d %d\n", pid, proctab[pid].bs_pid_map[0].bs_status);
   return SYSERR;
 
 }
@@ -122,7 +122,7 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages)
     proctab[pid].bs_pid_map[source].bs_sem = -1;
     proctab[pid].bs_pid_map[source].private = 0;
 
-    kprintf("(unmapped)bsm map successful, pid: %d, vpno: %d source %d npages: %d\n", pid, vpno, source, npages);
+    kprintf("(unmapped)bsm map successful, pid: %d, vpno: %d source %d npages: %d, addr: %08x\n", pid, vpno, source, npages, vpno*NBPG);
     return OK;
     // bsm_tab[source].pid *= bs_pid_map[pid];
   }

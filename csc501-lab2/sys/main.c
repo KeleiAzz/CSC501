@@ -291,6 +291,7 @@ void proc1_test5(int* ret) {
   x = vgetmem(1024);
   if ((x == NULL) || (x < 0x1000000)
       || (x > 0x1000000 + 128 * NBPG - 1024)) {
+    kprintf("x= %08x\n", x);
     *ret = TFAILED;
   }
   if (x == NULL)
@@ -300,18 +301,23 @@ void proc1_test5(int* ret) {
   *(x + 1) = 200;
 
   if ((*x != 100) || (*(x+1) != 200)) {
+    kprintf("failed x+1\n");
     *ret = TFAILED;
   }
   vfreemem(x, 1024);
 
   x = vgetmem(129*NBPG); //try to acquire a space that is bigger than size of one backing store
   if (x != NULL) {
+    kprintf("failed 129\n");
     *ret = TFAILED;
   }
 
   x = vgetmem(50*NBPG);
+  kprintf("x= %08x\n", x);
   y = vgetmem(50*NBPG);
+  kprintf("y= %08x\n", y);
   z = vgetmem(50*NBPG);
+  kprintf("z= %08x\n", z);
   if ((x == NULL) || (y == NULL) || (z != NULL)){
     *ret = TFAILED;
     if (x != NULL) vfreemem(x, 50*NBPG);
@@ -412,8 +418,8 @@ int main() {
   // test3();
 
   // test4();
-  // test5();
-  test6();
+  test5();
+  // test6();
 
   return 0;
 }
