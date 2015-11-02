@@ -181,7 +181,6 @@ void test3() {
     kprintf("\tPASSED!\n");
 }
 /*-------------------------------------------------------------------------------------*/
-
 void proc1_test4(int* ret) {
   char *addr;
   int i;
@@ -194,19 +193,20 @@ void proc1_test4(int* ret) {
     sleep(3);
     return;
   }
-
+  kprintf("in proc 1\n");
   addr = (char*) MYVADDR1;
   for (i = 0; i < 26; i++) {
     *(addr + i * NBPG) = 'A' + i;
   }
-  sleep(6);
-
+  sleep(7);
+  kprintf("%d failed??%d\n ", *ret, proctab[47].pstate);
   /*Shoud see what proc 2 updated*/
   for (i = 0; i < 26; i++) {
     /*expected output is abcde.....*/
+    kprintf("-->%c\n", *(addr + i * NBPG));
     if (*(addr + i * NBPG) != 'a'+i){
       *ret = TFAILED;
-      break;    
+      // break;    
     }
   }
 
@@ -226,23 +226,30 @@ void proc2_test4(int *ret) {
     sleep(3);
     return;
   }
-
+  kprintf("in proc 2\n");
   addr = (char*) MYVADDR2;
 
   /*Shoud see what proc 1 updated*/
   for (i = 0; i < 26; i++) {
     /*expected output is ABCDEF.....*/
+    kprintf("%c\n", *(addr + i * NBPG));
     if (*(addr + i * NBPG) != 'A'+i){
       *ret = TFAILED;
       break;
     }
   }
-
+  kprintf("%d failed proc 2??\n ", *ret);
   /*Update the content, proc1 should see it*/
+
   for (i = 0; i < 26; i++) {
     *(addr + i * NBPG) = 'a' + i;
+    kprintf("proc 2-->%c\n", *(addr + i * NBPG));
   }
-
+  // sleep(3);
+  // for (i = 0; i < 26; i++) {
+  //   // *(addr + i * NBPG) = 'a' + i;
+  //   kprintf("proc 2-->%c\n", *(addr + i * NBPG));
+  // }
   xmunmap(MYVPNO2);
   release_bs(MYBS1);
   return;
@@ -257,12 +264,18 @@ void test4() {
   pid2 = create(proc2_test4, 2000, 20, "proc2_test4", 1, &ret);
 
   resume(pid1);
-  sleep(3);
+  sleep(4);
   resume(pid2);
 
   sleep(10);
   kill(pid1);
   kill(pid2);
+  // for (i = 0; i < 26; i++) {
+  //   *(addr + i * NBPG) = 'a' + i;
+  //   kprintf("proc 2-->%c\n", *(addr + i * NBPG));
+  // }
+  // kprintf("%x\n", (char **)BACKING_STORE_BASE + (1<<19) + 0*NBPG);
+  // kprintf("%x\n", (char **)BACKING_STORE_BASE + (1<<19) + 1*NBPG);
   if (ret != TPASSED)
     kprintf("\tFAILED!\n");
   else
@@ -394,13 +407,13 @@ void test6(){
 int main() {
   kprintf("\n\nHello World, Xinu lives\n\n");
  
-  test1();
-  test2();
-  test3();
+  // test1();
+  // test2();
+  // test3();
 
   // test4();
   // test5();
-  // test6();
+  test6();
 
   return 0;
 }

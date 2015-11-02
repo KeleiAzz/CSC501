@@ -4,7 +4,7 @@
 #include <kernel.h>
 #include <proc.h>
 #include <q.h>
-
+#include <paging.h>
 unsigned long currSP;	/* REAL sp of current process */
 
 /*------------------------------------------------------------------------
@@ -52,16 +52,9 @@ int	resched()
 	}
 
 	/* remove highest priority process at end of ready list */
-
+	int oldpid = currpid;
+	int j;
 	nptr = &proctab[ (currpid = getlast(rdytail)) ];
-	// if(currpid < 0)
-	// {
-	// 	kprintf("WTF!!!\n");
-	// }
-	// if(currpid == 49)
-	// {
-	// 	kprintf("right!\n");
-	// }
 	nptr->pstate = PRCURR;		/* mark it currently running	*/
 #ifdef notdef
 #ifdef	STKCHK
@@ -91,6 +84,34 @@ int	resched()
 #ifdef	DEBUG
 	PrintSaved(nptr);
 #endif
+	
+	
+	for(j = 0; j < NFRAMES; j ++)
+  	{
+    	if((frm_tab[j].fr_status == FRM_MAPPED) && (frm_tab[j].fr_type == FR_PAGE))
+     	{
+      		int tmp_store, tmp_pageth;
+      		if( frm_tab[j].fr_pid == oldpid && bsm_lookup(frm_tab[j].fr_pid, frm_tab[j].fr_vpno * NBPG, &tmp_store, &tmp_pageth) != SYSERR) 
+        	{
+        		write_bs((j + FRAME0)*NBPG, tmp_store, tmp_pageth);
+        	}
+      		
+    	}
+  	}
+  	for(j = 0; j < NFRAMES; j++)
+  	{
+  		if((frm_tab[j].fr_status == FRM_MAPPED) && (frm_tab[j].fr_type == FR_PAGE))
+     	{
+      		int tmp_store, tmp_pageth;
+      		if( frm_tab[j].fr_pid == currpid && bsm_lookup(frm_tab[j].fr_pid, frm_tab[j].fr_vpno * NBPG, &tmp_store, &tmp_pageth) != SYSERR) 
+        	{        
+        		read_bs((j + FRAME0)*NBPG, tmp_store, tmp_pageth);
+        	}
+      		
+    	}	
+  	}
+
+
 	set_PDBR(currpid);
 	// write_cr3(proctab[currpid].pdbr);
 	ctxsw(&optr->pesp, optr->pirmask, &nptr->pesp, nptr->pirmask);

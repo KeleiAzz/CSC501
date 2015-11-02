@@ -102,11 +102,11 @@ int create_global_PT()
 
 int get_PD(int vaddr)
 {
-  return vaddr >> 22;
+  return (unsigned int)vaddr >> 22;
 }
 int get_PT(int vaddr)
 {
-  return (vaddr >> 12) & 0x000003ff;
+  return (unsigned int)(vaddr >> 12) & 0x000003ff;
 }
 
 void set_PDBR(int pid)

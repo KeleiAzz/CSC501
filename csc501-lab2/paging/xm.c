@@ -38,6 +38,7 @@ SYSCALL xmmap(int virtpage, bsd_t source, int npages)
     restore(ps);
     return SYSERR;
   }
+  kprintf("xmmap successful, virtpage: %d\n", virtpage);
   restore(ps);
   return OK;
   // kprintf("xmmap - to be implemented!\n");
