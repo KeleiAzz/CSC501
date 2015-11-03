@@ -65,8 +65,18 @@ typedef struct{
   int fr_dirty;
   void *cookie;				/* private data structure	*/
   unsigned long int fr_loadtime;	/* when the page is loaded 	*/
+  int fr_ref;
 }fr_map_t;
 
+typedef struct node
+      {
+        int frm_id;
+        struct node *next;
+      } fifo_node;
+// int replace;
+
+extern int page_replace_policy;
+extern fifo_node fifo_head;
 extern bs_map_t bsm_tab[];
 extern fr_map_t frm_tab[];
 /* Prototypes for required API calls */
@@ -105,7 +115,7 @@ int create_global_PT();
 #define FR_DIR		2
 
 #define FIFO		3
-#define GCM		4
+#define LRU		4
 
 // #define NBS             16
 #define MAX_ID          15              /* You get 10 mappings, 0 - 9 */

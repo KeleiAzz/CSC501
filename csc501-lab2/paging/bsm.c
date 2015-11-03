@@ -93,7 +93,7 @@ SYSCALL bsm_lookup(int pid, long vaddr, int* store, int* pageth)
   }
   *store = -1;
   *pageth = -1;
-  kprintf("bsm lookup failed %d %d\n", pid, proctab[pid].bs_pid_map[0].bs_status);
+//  kprintf("bsm lookup failed %d %d\n", pid, proctab[pid].bs_pid_map[0].bs_status);
   return SYSERR;
 
 }

@@ -55,6 +55,8 @@ int	resched()
 	int oldpid = currpid;
 	int j;
 	nptr = &proctab[ (currpid = getlast(rdytail)) ];
+
+	// kprintf("context switch from %d to %d\n", oldpid, currpid);
 	nptr->pstate = PRCURR;		/* mark it currently running	*/
 #ifdef notdef
 #ifdef	STKCHK

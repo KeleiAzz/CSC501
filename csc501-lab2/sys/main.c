@@ -1,5 +1,5 @@
-/* user.c - main */ 
- 
+/* user.c - main */
+
 #include <conf.h>
 #include <kernel.h>
 #include <proc.h>
@@ -65,25 +65,19 @@ void proc_test2(int i,int j,int* ret,int s) {
   int bsize;
   int r;
   bsize = get_bs(i, j);
-  if (bsize != 50)  //????
-    {
-      // kprintf("failed here!!\n");
-        *ret = TFAILED;
-      }
+  if (bsize != 50)
+    *ret = TFAILED;
   r = xmmap(MYVPNO1, i, j);
   if (j<=50 && r == SYSERR){
     *ret = TFAILED;
-    // kprintf("!failed here!!\n");
   }
   if (j> 50 && r != SYSERR){
-    // kprintf("!!failed here!!\n");
     *ret = TFAILED;
   }
   sleep(s);
   if (r != SYSERR)
     xmunmap(MYVPNO1);
   release_bs(i);
-  // kprintf("ret = %d <---------=================== %d %d %d %d\n", *ret, currpid, bsize, r, j);
   return;
 }
 void test2() {
@@ -96,20 +90,15 @@ void test2() {
 
   int bsize = get_bs(1, 100);
   if (bsize != 100)
-    {kprintf("failed here!!\n");
-        ret = TFAILED;}
+    ret = TFAILED;
   release_bs(1);
-
   bsize = get_bs(1, 130);
   if (bsize != SYSERR)
-  {kprintf("failed here!!!\n");
-    ret = TFAILED;}
-
+    ret = TFAILED;
   bsize = get_bs(1, 0);
   if (bsize != SYSERR)
-    {kprintf("failed here!!!!!\n");
-        ret = TFAILED;}
-  // kprintf("ret = %d <==============================\n", ret);
+    ret = TFAILED;
+
   mypid = create(proc_test2, 2000, 20, "proc_test2", 4, 1,
                  50, &ret, 4);
   resume(mypid);
@@ -181,6 +170,7 @@ void test3() {
     kprintf("\tPASSED!\n");
 }
 /*-------------------------------------------------------------------------------------*/
+
 void proc1_test4(int* ret) {
   char *addr;
   int i;
@@ -193,20 +183,19 @@ void proc1_test4(int* ret) {
     sleep(3);
     return;
   }
-  kprintf("in proc 1\n");
+
   addr = (char*) MYVADDR1;
   for (i = 0; i < 26; i++) {
     *(addr + i * NBPG) = 'A' + i;
   }
-  sleep(7);
-  kprintf("%d failed??%d\n ", *ret, proctab[47].pstate);
+  sleep(6);
+
   /*Shoud see what proc 2 updated*/
   for (i = 0; i < 26; i++) {
     /*expected output is abcde.....*/
-    kprintf("-->%c\n", *(addr + i * NBPG));
     if (*(addr + i * NBPG) != 'a'+i){
       *ret = TFAILED;
-      // break;    
+      break;    
     }
   }
 
@@ -226,30 +215,23 @@ void proc2_test4(int *ret) {
     sleep(3);
     return;
   }
-  kprintf("in proc 2\n");
+
   addr = (char*) MYVADDR2;
 
   /*Shoud see what proc 1 updated*/
   for (i = 0; i < 26; i++) {
     /*expected output is ABCDEF.....*/
-    kprintf("%c\n", *(addr + i * NBPG));
     if (*(addr + i * NBPG) != 'A'+i){
       *ret = TFAILED;
       break;
     }
   }
-  kprintf("%d failed proc 2??\n ", *ret);
-  /*Update the content, proc1 should see it*/
 
+  /*Update the content, proc1 should see it*/
   for (i = 0; i < 26; i++) {
     *(addr + i * NBPG) = 'a' + i;
-    kprintf("proc 2-->%c\n", *(addr + i * NBPG));
   }
-  // sleep(3);
-  // for (i = 0; i < 26; i++) {
-  //   // *(addr + i * NBPG) = 'a' + i;
-  //   kprintf("proc 2-->%c\n", *(addr + i * NBPG));
-  // }
+
   xmunmap(MYVPNO2);
   release_bs(MYBS1);
   return;
@@ -264,18 +246,12 @@ void test4() {
   pid2 = create(proc2_test4, 2000, 20, "proc2_test4", 1, &ret);
 
   resume(pid1);
-  sleep(4);
+  sleep(3);
   resume(pid2);
 
   sleep(10);
   kill(pid1);
   kill(pid2);
-  // for (i = 0; i < 26; i++) {
-  //   *(addr + i * NBPG) = 'a' + i;
-  //   kprintf("proc 2-->%c\n", *(addr + i * NBPG));
-  // }
-  // kprintf("%x\n", (char **)BACKING_STORE_BASE + (1<<19) + 0*NBPG);
-  // kprintf("%x\n", (char **)BACKING_STORE_BASE + (1<<19) + 1*NBPG);
   if (ret != TPASSED)
     kprintf("\tFAILED!\n");
   else
@@ -291,7 +267,6 @@ void proc1_test5(int* ret) {
   x = vgetmem(1024);
   if ((x == NULL) || (x < 0x1000000)
       || (x > 0x1000000 + 128 * NBPG - 1024)) {
-    kprintf("x= %08x\n", x);
     *ret = TFAILED;
   }
   if (x == NULL)
@@ -301,23 +276,18 @@ void proc1_test5(int* ret) {
   *(x + 1) = 200;
 
   if ((*x != 100) || (*(x+1) != 200)) {
-    kprintf("failed x+1\n");
     *ret = TFAILED;
   }
   vfreemem(x, 1024);
 
   x = vgetmem(129*NBPG); //try to acquire a space that is bigger than size of one backing store
   if (x != NULL) {
-    kprintf("failed 129\n");
     *ret = TFAILED;
   }
 
   x = vgetmem(50*NBPG);
-  kprintf("x= %08x\n", x);
   y = vgetmem(50*NBPG);
-  kprintf("y= %08x\n", y);
   z = vgetmem(50*NBPG);
-  kprintf("z= %08x\n", z);
   if ((x == NULL) || (y == NULL) || (z != NULL)){
     *ret = TFAILED;
     if (x != NULL) vfreemem(x, 50*NBPG);
@@ -409,6 +379,236 @@ void test6(){
   else
     kprintf("\tPASSED!\n");
 }
+ 
+/*-------------------------------------------------------------------------------------*/
+void test_func7()
+{
+  int PAGE0 = 0x40000;
+  int i,j,temp;
+  int addrs[1200];
+  int cnt = 0; 
+  //can go up to  (NFRAMES - 5 frames for null prc - 1pd for main - 1pd + 1pt frames for this proc)
+  //frame for pages will be from 1032-2047
+  kprintf("in test 7 func\n");
+  int maxpage = (NFRAMES - (5 + 1 + 1 + 1));
+  for (i=0;i<=maxpage/100;i++){
+    if(get_bs(i,100) == SYSERR)
+    {
+      kprintf("get_bs call failed \n");
+      return;
+    }
+    if (xmmap(PAGE0+i*100, i, 100) == SYSERR) {
+      kprintf("xmmap call failed\n");
+      return;
+    }
+    for(j=0;j < 100;j++)
+    {  
+      //store the virtual addresses
+      addrs[cnt++] = (PAGE0+(i*100) + j) << 12;
+    }     
+  }
+  /* all of these should generate page fault, no page replacement yet
+     acquire all free frames, starting from 1032 to 2047, lower frames are acquired first
+     */
+  char *zero_addr = (char*) 0x0;
+  for(i=0; i < maxpage; i++)
+  {  
+    *((int *)addrs[i]) = i + 1;
+    if (i + 1 != *((int *)(zero_addr + (i + 1032) * NBPG))) {
+      kprintf("\tFAILED!\n");
+      kprintf("AA 0x%08x: %d\n", (int *)addrs[i], *((int *)addrs[i]));
+      kprintf("BB 0x%08x: %d\n", zero_addr + (i + 1032) * NBPG, *((int *)(zero_addr + (i + 1032) * NBPG)));
+    }
+  }
+  
+  //trigger page replacement, this should clear all access bits of all pages
+  kprintf("\n\t7.1 Expected replaced frame: 1032\n\t");
+
+  *((int *)addrs[maxpage]) = maxpage + 1; 
+  temp = *((int *)addrs[maxpage]);
+  if (temp != *((int *)(1032 * NBPG))) {
+    kprintf("\tFAILED!\n");
+    kprintf("AA 0x%08x: %d\n", (int *)addrs[maxpage], *((int *)addrs[maxpage]));
+    kprintf("BB 0x%08x: %d\n", 1032 * NBPG, *((int *)(1032 * NBPG)));
+  }
+  
+   
+  for(i=1; i <= maxpage; i++) 
+  { 
+    if ((i != 600) && (i != 800)) 
+      *((int *)addrs[i])= i+1; 
+  }
+   
+  kprintf("\n\t7.2 Expected replaced frame: 1033\n\t"); 
+  *((int *)addrs[maxpage+1]) = maxpage + 2;  
+  temp = *((int *)addrs[maxpage+1]); 
+  if (temp != *((int *)(1033 * NBPG))) {
+    kprintf("\tFAILED!\n");
+    kprintf("AA 0x%08x: %d\n", (int *)addrs[maxpage], *((int *)addrs[maxpage]));
+    kprintf("BB 0x%08x: %d\n", 1033 * NBPG, *((int *)(1033 * NBPG)));
+  }
+  
+  for (i=0;i<=maxpage/100;i++){
+      xmunmap(PAGE0+(i*100));
+      release_bs(i);    
+  }
+  // return;
+  kprintf("finished\n");
+}
+void test7(){
+  int pid1;
+  int ret = TPASSED;
+  kprintf("\nTest 7: Test FIFO page replacement policy\n");
+  srpolicy(FIFO); 
+  pid1 = create(test_func7, 2000, 20, "test_func7", 0, NULL);
+  resume(pid1);
+  sleep(10);
+  kill(pid1);
+  kprintf("\n\tFinished! Check error and replaced frames\n");
+}
+
+/*-------------------------------------------------------------------------------------*/
+void test_func8()
+{
+  int PAGE0 = 0x40000;
+  int i,j,temp;
+  int addrs[1200];
+  int cnt = 0; 
+  //can go up to  (NFRAMES - 5 frames for null prc - 1pd for main - 1pd + 1pt frames for this proc)
+  //frame for pages will be from 1032-2047
+  int maxpage = (NFRAMES - (5 + 1 + 1 + 1));
+  for (i=0;i<=maxpage/100;i++){
+    if(get_bs(i,100) == SYSERR)
+    {
+      kprintf("get_bs call failed \n");
+      return;
+    }
+    if (xmmap(PAGE0+i*100, i, 100) == SYSERR) {
+      kprintf("xmmap call failed\n");
+      return;
+    }
+    for(j=0;j < 100;j++)
+    {  
+      //store the virtual addresses
+      addrs[cnt++] = (PAGE0+(i*100) + j) << 12;
+    }     
+  }
+  /* all of these should generate page fault, no page replacement yet
+     acquire all free frames, starting from 1032 to 2047, lower frames are acquired first
+     */
+  char *zero_addr = (char*) 0x0;
+  for(i=0; i < maxpage-1; i++)
+  {  
+    *((int *)addrs[i]) = i + 1;
+    if (i + 1 != *((int *)(zero_addr + (i + 1032) * NBPG))) {
+      kprintf("\tFAILED!\n");
+      kprintf("AA 0x%08x: %d\n", (int *)addrs[i], *((int *)addrs[i]));
+      kprintf("BB 0x%08x: %d\n", zero_addr + (i + 1032) * NBPG, *((int *)(zero_addr + (i + 1032) * NBPG)));
+    }
+  }
+  
+  for(i=0; i < maxpage/2; i++)
+  {  
+    *((int *)addrs[i]) = i * 2 + 1;
+  }
+  i = maxpage-1;
+  *((int *)addrs[i]) = i + 1;
+  
+  //trigger page replacement, this should clear all access bits of all pages
+  kprintf("\t8.1 Expected replaced frame: %d\n\t",1032+maxpage/2);
+
+  *((int *)addrs[maxpage]) = maxpage * 3 + 1; 
+  temp = *((int *)addrs[maxpage]);
+  if (temp != *((int *)((1032+maxpage/2) * NBPG))) {
+    kprintf("\tFAILED!\n");
+    kprintf("AA 0x%08x: %d\n", (int *)addrs[maxpage], *((int *)addrs[maxpage]));
+    kprintf("BB 0x%08x: %d\n", (1032+maxpage/2) * NBPG, *((int *)((1032+maxpage/2) * NBPG)));
+  }
+     
+  for (i=0;i<=maxpage/100;i++){
+      xmunmap(PAGE0+(i*100));
+      release_bs(i);    
+  }
+}
+void test_func8_2()
+{
+  int PAGE0 = 0x40000;
+  int i,j,temp;
+  int addrs[1200];
+  int cnt = 0; 
+  //can go up to  (NFRAMES - 5 frames for null prc - 1pd for main - 1pd + 1pt frames for this proc)
+  //frame for pages will be from 1032-2047
+  int maxpage = (NFRAMES - (5 + 1 + 1 + 1));
+  for (i=0;i<=maxpage/100;i++){
+    if(get_bs(i,100) == SYSERR)
+    {
+      kprintf("get_bs call failed \n");
+      return;
+    }
+    if (xmmap(PAGE0+i*100, i, 100) == SYSERR) {
+      kprintf("xmmap call failed\n");
+      return;
+    }
+    for(j=0;j < 100;j++)
+    {  
+      //store the virtual addresses
+      addrs[cnt++] = (PAGE0+(i*100) + j) << 12;
+    }     
+  }
+  /* all of these should generate page fault, no page replacement yet
+     acquire all free frames, starting from 1032 to 2047, lower frames are acquired first
+     */
+  char *zero_addr = (char*) 0x0;
+  for(i=0; i < maxpage-1; i++)
+  {  
+    *((int *)addrs[i]) = i + 1;
+    if (i + 1 != *((int *)(zero_addr + (i + 1032) * NBPG))) {
+      kprintf("\tFAILED!\n");
+      kprintf("AA 0x%08x: %d\n", (int *)addrs[i], *((int *)addrs[i]));
+      kprintf("BB 0x%08x: %d\n", zero_addr + (i + 1032) * NBPG, *((int *)(zero_addr + (i + 1032) * NBPG)));
+    }
+  }
+  
+  for(i=0; i < maxpage/3; i++)
+  {  
+    *((int *)addrs[i]) = i * 4 + 1;
+  }
+  i = maxpage-1;
+  *((int *)addrs[i]) = i + 1;
+  
+  //trigger page replacement, this should clear all access bits of all pages
+  kprintf("\t8.2 Expected replaced frame: %d\n\t",1032+maxpage/3);
+
+  *((int *)addrs[maxpage]) = maxpage * 5 + 1; 
+  temp = *((int *)addrs[maxpage]);
+  if (temp != *((int *)((1032+maxpage/3) * NBPG))) {
+    kprintf("\tFAILED!\n");
+    kprintf("AA 0x%08x: %d\n", (int *)addrs[maxpage], *((int *)addrs[maxpage]));
+    kprintf("BB 0x%08x: %d\n", (1032+maxpage/3) * NBPG, *((int *)((1032+maxpage/3) * NBPG)));
+  }
+    
+  for (i=0;i<=maxpage/100;i++){
+      xmunmap(PAGE0+(i*100));
+      release_bs(i);    
+  }
+}
+
+void test8(){
+  int pid1;
+  int ret = TPASSED;
+  kprintf("\nTest 8: Test LRU page replacement policy\n");
+  srpolicy(LRU); 
+  pid1 = create(test_func8, 2000, 20, "test_func8", 0, NULL);
+  resume(pid1);
+  sleep(10);
+  kill(pid1);
+  kprintf("\n\tSecond run (test where killing process is handled correctly):\n");
+  pid1 = create(test_func8_2, 2000, 20, "test_func8_2", 0, NULL);
+  resume(pid1);
+  sleep(10);
+  kill(pid1);
+  kprintf("\n\tFinished! Check error and replaced frames\n");
+}
 
 int main() {
   kprintf("\n\nHello World, Xinu lives\n\n");
@@ -418,8 +618,10 @@ int main() {
   // test3();
 
   // test4();
-  test5();
+  // test5();
   // test6();
 
+  // test7();
+  test8();
   return 0;
 }

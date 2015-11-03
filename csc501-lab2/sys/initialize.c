@@ -33,6 +33,8 @@ struct	qent	q[NQENT];	/* q table (see queue.c)		*/
 int	nextqueue;		/* next slot in q structure to use	*/
 char	*maxaddr;		/* max memory address (set by sizmem)	*/
 struct	mblock	memlist;	/* list of free memory blocks		*/
+ fifo_node fifo_head;
+
 #ifdef	Ntty
 struct  tty     tty[Ntty];	/* SLU buffers and mode control		*/
 #endif
@@ -194,6 +196,8 @@ sysinit()
 	write_cr3(proctab[NULLPROC].pdbr);
 
 	enable_paging();
+	
+	
 	pptr = &proctab[NULLPROC];	/* initialize null process entry */
 	pptr->pstate = PRCURR;
 	for (j=0; j<7; j++)
@@ -219,6 +223,8 @@ sysinit()
         pptr -> bs_pid_map[i].private = 0;
         // pptr -> bs_pid_map[i].bs_ref = 0;
     }
+    fifo_head.frm_id = -1;
+	fifo_head.next = (struct fifo_node*)NULL;
 	currpid = NULLPROC;
 
 	for (i=0 ; i<NSEM ; i++) {	/* initialize semaphores */
@@ -227,7 +233,7 @@ sysinit()
 	}
 
 	rdytail = 1 + (rdyhead=newqueue());/* initialize ready list */
-
+	kprintf("init frm done\n");
 
 	return(OK);
 }

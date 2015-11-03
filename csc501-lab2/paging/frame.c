@@ -41,10 +41,21 @@ SYSCALL get_frm(int* avail)
 		if(frm_tab[i].fr_status == FRM_UNMAPPED)
 		{
 			*avail = i;
-      kprintf("got frame %d\n", i);
+      // frm_tab[i].
+      // kprintf("got frame %d\n", i);
       return i;
 		} /* code */
 	}
+  kprintf("all frames are mapped, need to swap out\n");
+  if(page_replace_policy == FIFO)
+  {
+    int frm_id = fifo_head.next -> frm_id;
+    fifo_head.next = fifo_head.next -> next;
+    kprintf("got frame %d, now free this frame\n", frm_id + NFRAMES);
+    free_frm(frm_id);
+    *avail = frm_id;
+    return frm_id;
+  }
 	return SYSERR;
 }
 
@@ -54,7 +65,47 @@ SYSCALL get_frm(int* avail)
  */
 SYSCALL free_frm(int i)
 {
+  if( i < 0 || i > NFRAMES)
+  {
+    return SYSERR;
+  }
+  if(frm_tab[i].fr_type == FR_PAGE)
+  {
+    int store, pageth;
+    if( bsm_lookup(frm_tab[i].fr_pid, frm_tab[i].fr_vpno * NBPG, &store, &pageth) == SYSERR)
+    {
+      return SYSERR;
+    }
+    write_bs((i + FRAME0) * NBPG, store, pageth);
+    pd_t *pde = proctab[frm_tab[i].fr_pid].pdbr + get_PD(frm_tab[i].fr_vpno * NBPG) * sizeof(pd_t);
+    pt_t *pte = (pde -> pd_base) * NBPG + get_PT(frm_tab[i].fr_vpno * NBPG) * sizeof(pt_t);
 
+    if(pte -> pt_pres == 0)
+    {
+      kprintf("pt present is 0!!\n");
+      return SYSERR;
+    }
+    pte -> pt_pres = 0;
+    pte -> pt_write = 1;
+    pte -> pt_user = 0;
+    pte -> pt_pwt = 0;
+    pte -> pt_pcd = 0;
+    pte -> pt_acc = 0;
+    pte -> pt_dirty = 0;
+    pte -> pt_mbz = 0;
+    pte -> pt_global = 0;
+    pte -> pt_avail = 0;
+    pte -> pt_base = 0;
+
+    frm_tab[i].fr_status = FRM_UNMAPPED;
+    frm_tab[i].fr_pid = -1;
+    frm_tab[i].fr_vpno = -1;
+    frm_tab[i].fr_ref = 0;
+    frm_tab[i].fr_type = -1;
+    frm_tab[i].fr_dirty = 0;
+    //frm_tab[i].fr_cookie
+    frm_tab[i].fr_loadtime = -1;
+  }
   kprintf("To be implemented!\n");
   return OK;
 }

@@ -45,6 +45,7 @@ int createPD(int pid)
 	int *avail;
 	if(get_frm(avail) < 0)
 	{
+    kprintf("no frame available for creating PD for proc %d\n", pid);
 		return -1;
 	}
 	frm_tab[*avail].fr_status = FRM_MAPPED;
