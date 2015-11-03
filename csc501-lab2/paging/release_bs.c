@@ -14,7 +14,7 @@ SYSCALL release_bs(bsd_t bs_id) {
   		bsm_tab[bs_id].bs_npages = 0;
   		bsm_tab[bs_id].bs_sem = -1;
   		bsm_tab[bs_id].private = 0;
-  		kprintf("Release bs successful\n");
+  		// kprintf("Release bs successful\n");
   		return OK;
 	}
 	else

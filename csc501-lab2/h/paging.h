@@ -74,7 +74,7 @@ typedef struct node
         struct node *next;
       } fifo_node;
 // int replace;
-
+extern int timeCount;
 extern int page_replace_policy;
 extern fifo_node fifo_head;
 extern bs_map_t bsm_tab[];

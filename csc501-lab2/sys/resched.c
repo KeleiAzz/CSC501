@@ -56,7 +56,7 @@ int	resched()
 	int j;
 	nptr = &proctab[ (currpid = getlast(rdytail)) ];
 
-	// kprintf("context switch from %d to %d\n", oldpid, currpid);
+	if(optr -> pstate == PRFREE) kprintf("context switch from %d to %d\n", oldpid, currpid);
 	nptr->pstate = PRCURR;		/* mark it currently running	*/
 #ifdef notdef
 #ifdef	STKCHK
@@ -87,7 +87,24 @@ int	resched()
 	PrintSaved(nptr);
 #endif
 	
-	
+	if(optr -> pstate == PRFREE)
+	{
+		for(j = 0; j < NFRAMES; j++)
+		{
+			if(frm_tab[j].fr_pid == oldpid)
+			{
+				frm_tab[j].fr_status = FRM_UNMAPPED;
+				frm_tab[j].fr_pid = -1;
+  				frm_tab[j].fr_vpno = -1;
+  				frm_tab[j].fr_refcnt = 0;
+  				frm_tab[j].fr_type = -1;
+  				frm_tab[j].fr_dirty = 0;
+  				frm_tab[j].fr_loadtime = -1;
+			}
+		}
+	}
+
+
 	for(j = 0; j < NFRAMES; j ++)
   	{
     	if((frm_tab[j].fr_status == FRM_MAPPED) && (frm_tab[j].fr_type == FR_PAGE))

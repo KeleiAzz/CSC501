@@ -46,14 +46,29 @@ SYSCALL get_frm(int* avail)
       return i;
 		} /* code */
 	}
-  kprintf("all frames are mapped, need to swap out\n");
+  // kprintf("all frames are mapped, need to swap out\n");
   if(page_replace_policy == FIFO)
   {
     int frm_id = fifo_head.next -> frm_id;
     fifo_head.next = fifo_head.next -> next;
-    kprintf("got frame %d, now free this frame\n", frm_id + NFRAMES);
+    // kprintf("got frame %d, now free this frame\n", frm_id + NFRAMES);
     free_frm(frm_id);
     *avail = frm_id;
+    return frm_id;
+  }
+  if(page_replace_policy == LRU)
+  {
+    int time = 999999, frm_id;
+    for(i = 0 ; i < NFRAMES; i++)
+    {
+      if(frm_tab[i].fr_loadtime <= time)
+      {
+        time = frm_tab[i].fr_loadtime;
+        frm_id = i;
+      }
+     }
+    *avail = frm_id;
+    free_frm(frm_id);
     return frm_id;
   }
 	return SYSERR;
@@ -105,8 +120,9 @@ SYSCALL free_frm(int i)
     frm_tab[i].fr_dirty = 0;
     //frm_tab[i].fr_cookie
     frm_tab[i].fr_loadtime = -1;
+    return OK;
   }
-  kprintf("To be implemented!\n");
+  // kprintf("To be implemented!\n");
   return OK;
 }
 

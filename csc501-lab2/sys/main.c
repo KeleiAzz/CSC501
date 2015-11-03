@@ -416,8 +416,8 @@ void test_func7()
     *((int *)addrs[i]) = i + 1;
     if (i + 1 != *((int *)(zero_addr + (i + 1032) * NBPG))) {
       kprintf("\tFAILED!\n");
-      kprintf("AA 0x%08x: %d\n", (int *)addrs[i], *((int *)addrs[i]));
-      kprintf("BB 0x%08x: %d\n", zero_addr + (i + 1032) * NBPG, *((int *)(zero_addr + (i + 1032) * NBPG)));
+//     kprintf("AA 0x%08x: %d\n", (int *)addrs[i], *((int *)addrs[i]));
+    //  kprintf("BB 0x%08x: %d\n", zero_addr + (i + 1032) * NBPG, *((int *)(zero_addr + (i + 1032) * NBPG)));
     }
   }
   
@@ -428,8 +428,8 @@ void test_func7()
   temp = *((int *)addrs[maxpage]);
   if (temp != *((int *)(1032 * NBPG))) {
     kprintf("\tFAILED!\n");
-    kprintf("AA 0x%08x: %d\n", (int *)addrs[maxpage], *((int *)addrs[maxpage]));
-    kprintf("BB 0x%08x: %d\n", 1032 * NBPG, *((int *)(1032 * NBPG)));
+//    kprintf("AA 0x%08x: %d\n", (int *)addrs[maxpage], *((int *)addrs[maxpage]));
+ //   kprintf("BB 0x%08x: %d\n", 1032 * NBPG, *((int *)(1032 * NBPG)));
   }
   
    
@@ -444,8 +444,8 @@ void test_func7()
   temp = *((int *)addrs[maxpage+1]); 
   if (temp != *((int *)(1033 * NBPG))) {
     kprintf("\tFAILED!\n");
-    kprintf("AA 0x%08x: %d\n", (int *)addrs[maxpage], *((int *)addrs[maxpage]));
-    kprintf("BB 0x%08x: %d\n", 1033 * NBPG, *((int *)(1033 * NBPG)));
+   // kprintf("AA 0x%08x: %d\n", (int *)addrs[maxpage], *((int *)addrs[maxpage]));
+   // kprintf("BB 0x%08x: %d\n", 1033 * NBPG, *((int *)(1033 * NBPG)));
   }
   
   for (i=0;i<=maxpage/100;i++){
@@ -519,6 +519,7 @@ void test_func8()
 
   *((int *)addrs[maxpage]) = maxpage * 3 + 1; 
   temp = *((int *)addrs[maxpage]);
+  kprintf("to here\n");
   if (temp != *((int *)((1032+maxpage/2) * NBPG))) {
     kprintf("\tFAILED!\n");
     kprintf("AA 0x%08x: %d\n", (int *)addrs[maxpage], *((int *)addrs[maxpage]));
@@ -613,15 +614,15 @@ void test8(){
 int main() {
   kprintf("\n\nHello World, Xinu lives\n\n");
  
-  // test1();
-  // test2();
-  // test3();
+//  test1();
+//   test2();
+//   test3();
 
   // test4();
-  // test5();
+//  test5();
   // test6();
 
-  // test7();
-  test8();
+  test7();
+ //  test8();
   return 0;
 }

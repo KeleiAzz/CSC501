@@ -34,7 +34,7 @@ int	nextqueue;		/* next slot in q structure to use	*/
 char	*maxaddr;		/* max memory address (set by sizmem)	*/
 struct	mblock	memlist;	/* list of free memory blocks		*/
  fifo_node fifo_head;
-
+int timeCount;
 #ifdef	Ntty
 struct  tty     tty[Ntty];	/* SLU buffers and mode control		*/
 #endif
@@ -49,7 +49,7 @@ char 	vers[80];
 int	console_dev;		/* the console device			*/
 
 /*  added for the demand paging */
-int page_replace_policy = FIFO;
+int page_replace_policy = 0;
 
 /************************************************************************/
 /***				NOTE:				      ***/
@@ -225,6 +225,7 @@ sysinit()
     }
     fifo_head.frm_id = -1;
 	fifo_head.next = (struct fifo_node*)NULL;
+	timeCount = 0;
 	currpid = NULLPROC;
 
 	for (i=0 ; i<NSEM ; i++) {	/* initialize semaphores */
