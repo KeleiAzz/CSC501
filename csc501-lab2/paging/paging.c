@@ -20,7 +20,7 @@ int createPT(int pid)
   	frm_tab[*avail].fr_type = FR_TBL;
   	frm_tab[*avail].fr_dirty = 0;
   	frm_tab[*avail].fr_loadtime = -1;
-     kprintf("create pt for %d, in frame %d\n", pid, *avail);
+   //  kprintf("create pt for %d, in frame %d\n", pid, *avail);
     int i;
   	for(i = 0; i < 1024; i++)
   	{
@@ -45,7 +45,7 @@ int createPD(int pid)
 	int *avail;
 	if(get_frm(avail) < 0)
 	{
-    kprintf("no frame available for creating PD for proc %d\n", pid);
+   // kprintf("no frame available for creating PD for proc %d\n", pid);
 		return -1;
 	}
 	frm_tab[*avail].fr_status = FRM_MAPPED;
@@ -55,7 +55,7 @@ int createPD(int pid)
   	frm_tab[*avail].fr_type = FR_DIR;
   	frm_tab[*avail].fr_dirty = 0;
   	frm_tab[*avail].fr_loadtime = 0;
-     kprintf("create PD for %d, in frame %d\n", pid, *avail);
+     //kprintf("create PD for %d, in frame %d\n", pid, *avail);
   	proctab[pid].pdbr = (unsigned long) (FRAME0 + *avail) * NBPG;
   	int i;
   	for(i = 0; i < 1024; i++)

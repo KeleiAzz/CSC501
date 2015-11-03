@@ -16,7 +16,28 @@ SYSCALL pfint()
   int i;
 
   unsigned long cr2 = read_cr2();
-  
+  if(page_replace_policy == LRU)
+  {
+    pd_t *pde0; 
+    pt_t *pte0;
+    for(i = 0; i < NFRAMES; i++)
+    {
+      if(frm_tab[i].fr_type == FR_PAGE && frm_tab[i].fr_pid == currpid)
+      {
+       // pd_t *pde = proctab[frm_tab[i].fr_pid].pdbr + get_PD(frm_tab[i].fr_vpno * NBPG) * sizeof(pd_t);
+       int vaddr = frm_tab[i].fr_vpno * NBPG;
+        pde0 = proctab[frm_tab[i].fr_pid].pdbr + (unsigned int)(vaddr>>22) * sizeof(pd_t);
+      // pt_t *pte = (pde -> pd_base) * NBPG + get_PT(frm_tab[i].fr_vpno * NBPG) * sizeof(pt_t);
+        pte0 = (pde0 -> pd_base) * NBPG + ((unsigned int)(vaddr>>12) & 0x000003ff) * sizeof(pt_t);
+        if(pte0 -> pt_acc == 1)
+         {
+          frm_tab[i].fr_acctime = timeCount;
+          pte0 -> pt_acc = 0;
+         }
+       }
+     }
+    timeCount += 1;
+  }
   // kprintf("\ncr2:0x %08x\n", cr2);
   int store, pageth;
   if(bsm_lookup(currpid, cr2, &store, &pageth) == SYSERR)
@@ -75,6 +96,7 @@ SYSCALL pfint()
     new -> next = (struct fifo_node*)NULL;
     node -> next = new;
   }
+
 // kprintf("???\n");
   read_bs((avail + FRAME0) * NBPG, store, pageth);
   pt_t *pte = pde -> pd_base * NBPG + sizeof(pt_t)*(get_PT(cr2));
@@ -84,6 +106,7 @@ SYSCALL pfint()
   pte -> pt_base = avail + FRAME0;
   frm_tab[(unsigned int)pte/NBPG - FRAME0].fr_refcnt ++;
   // kprintf("page fault handled!\n");
+
   write_cr3(proctab[currpid].pdbr);
   
   restore(ps);

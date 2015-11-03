@@ -234,7 +234,7 @@ sysinit()
 	}
 
 	rdytail = 1 + (rdyhead=newqueue());/* initialize ready list */
-	kprintf("init frm done\n");
+//	kprintf("init frm done\n");
 
 	return(OK);
 }

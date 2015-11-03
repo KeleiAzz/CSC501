@@ -50,7 +50,9 @@ SYSCALL get_frm(int* avail)
   if(page_replace_policy == FIFO)
   {
     int frm_id = fifo_head.next -> frm_id;
+    fifo_node *swap_out = fifo_head.next;
     fifo_head.next = fifo_head.next -> next;
+    freemem(swap_out, sizeof(fifo_node));
     // kprintf("got frame %d, now free this frame\n", frm_id + NFRAMES);
     free_frm(frm_id);
     *avail = frm_id;
@@ -61,9 +63,9 @@ SYSCALL get_frm(int* avail)
     int time = 999999, frm_id;
     for(i = 0 ; i < NFRAMES; i++)
     {
-      if(frm_tab[i].fr_loadtime <= time)
+      if(frm_tab[i].fr_type == FR_PAGE && frm_tab[i].fr_acctime <= time)
       {
-        time = frm_tab[i].fr_loadtime;
+        time = frm_tab[i].fr_acctime;
         frm_id = i;
       }
      }

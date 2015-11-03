@@ -519,7 +519,6 @@ void test_func8()
 
   *((int *)addrs[maxpage]) = maxpage * 3 + 1; 
   temp = *((int *)addrs[maxpage]);
-  kprintf("to here\n");
   if (temp != *((int *)((1032+maxpage/2) * NBPG))) {
     kprintf("\tFAILED!\n");
     kprintf("AA 0x%08x: %d\n", (int *)addrs[maxpage], *((int *)addrs[maxpage]));
@@ -614,15 +613,15 @@ void test8(){
 int main() {
   kprintf("\n\nHello World, Xinu lives\n\n");
  
-//  test1();
-//   test2();
-//   test3();
+  test1();
+   test2();
+   test3();
 
-  // test4();
-//  test5();
-  // test6();
+   test4();
+  test5();
+   test6();
 
   test7();
- //  test8();
+   test8();
   return 0;
 }

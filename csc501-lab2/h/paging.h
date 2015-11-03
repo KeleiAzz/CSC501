@@ -65,6 +65,7 @@ typedef struct{
   int fr_dirty;
   void *cookie;				/* private data structure	*/
   unsigned long int fr_loadtime;	/* when the page is loaded 	*/
+  int fr_acctime;
   int fr_ref;
 }fr_map_t;
 

@@ -19,7 +19,7 @@ SYSCALL release_bs(bsd_t bs_id) {
 	}
 	else
 	{
-		kprintf("this bs %d is not mapped or there are processes mapped to this bs\n", bs_id);
+		//kprintf("this bs %d is not mapped or there are processes mapped to this bs\n", bs_id);
 		return SYSERR;
 	}
    

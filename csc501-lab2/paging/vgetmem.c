@@ -18,9 +18,9 @@ WORD	*vgetmem(nbytes)
 	struct	mblock	*p, *q, *leftover;
 
 	disable(ps);
-	kprintf("into vmemlist %d %08x\n",proctab[currpid].vmemlist -> mlen, proctab[currpid].vmemlist -> mnext);
+//	kprintf("into vmemlist %d %08x\n",proctab[currpid].vmemlist -> mlen, proctab[currpid].vmemlist -> mnext);
 	if (nbytes==0 || nbytes > 128*NBPG || proctab[currpid].vmemlist -> mnext == (struct mblock *) NULL) {
-		kprintf("nbytes == 0 or mlen <= 0\n");
+//		kprintf("nbytes == 0 or mlen <= 0\n");
 		restore(ps);
 		return( (WORD *)NULL);
 	}
@@ -57,11 +57,11 @@ WORD	*vgetmem(nbytes)
 		} 
 		else if ( p->mlen > nbytes ) 
 		{
-			kprintf("in vgetmen %08x %d\n", p, p->mlen);
+//			kprintf("in vgetmen %08x %d\n", p, p->mlen);
 			leftover = (struct mblock *)( (unsigned)p + nbytes );
-			kprintf("in vgetmen%08x\n", leftover);
+//			kprintf("in vgetmen%08x\n", leftover);
 			q->mnext = leftover;
-			kprintf("in vgetmen%08x\n", q->mnext);
+//			kprintf("in vgetmen%08x\n", q->mnext);
 			leftover->mnext = p->mnext;
 			leftover->mlen = p->mlen - nbytes;
 			restore(ps);

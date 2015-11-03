@@ -31,7 +31,7 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 	int bsm_id;
 	if( get_bsm(&bsm_id) == SYSERR)
 	{
-		kprintf("no bsm available\n");
+//		kprintf("no bsm available\n");
 		return SYSERR;
 	}
 	int pid = create(procaddr, ssize, priority, name, nargs, args);
@@ -39,7 +39,7 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 	
 	if(bsm_map(pid, 4096, bsm_id, hsize) == SYSERR)
 	{
-		kprintf("bsm mapping failed for %d", pid);
+//		kprintf("bsm mapping failed for %d", pid);
 		return SYSERR;
 	}
 	bsm_tab[bsm_id].private = 1;
@@ -49,17 +49,17 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 	proctab[pid].vhpno = 4096;
 	proctab[pid].vhpnpages = hsize;
 
-	kprintf("what is vmemlist\n");
+//	kprintf("what is vmemlist\n");
 	// proctab[pid].vmemlist -> mlen = hsize * NBPG;
 	// resume(pid);
 	// sleep(1);
 	int *addr;
 	addr = (int*) BACKING_STORE_BASE + bsm_id*0x00080000;
-	kprintf("addr is %08x\n", addr);
+//	kprintf("addr is %08x\n", addr);
 	*addr = (struct mblock *) NULL;
-	kprintf("in addr is %d\n", *addr);
+//	kprintf("in addr is %d\n", *addr);
 	*(addr + 1) = hsize * NBPG;
-	kprintf("in addr is %d\n", *(addr+1));
+//	kprintf("in addr is %d\n", *(addr+1));
 	struct mblock *mptr = (struct mblock *) BACKING_STORE_BASE + bsm_id*0x00080000;
 	// struct mblock *mptr = (unsigned int) roundmb(4096 * NBPG);
 	// struct mblock *mptr = getmem(sizeof(struct mblock));
@@ -69,7 +69,7 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 	proctab[pid].vmemlist -> mnext = (struct mblock *) 0x1000000;	
 	// mptr
 
-	kprintf("To be implemented!\n");
+//	kprintf("To be implemented!\n");
 	return pid;
 }
 

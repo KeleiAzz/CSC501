@@ -14,7 +14,6 @@ SYSCALL srpolicy(int policy)
 {
   /* sanity check ! */
 	page_replace_policy = policy;
-  kprintf("set policy to be %d\n", policy);
 	if(policy == FIFO)
 	{
 		int i;

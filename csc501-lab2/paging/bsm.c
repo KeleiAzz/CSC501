@@ -107,7 +107,7 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages)
 {
   if(vpno < 4096 || source < 0 || source > MAX_ID || npages < 0 || npages > NPGS)
   {
-    kprintf("failed in first if\n");
+    //kprintf("failed in first if\n");
     return SYSERR;
   }
   if(bsm_tab[source].bs_status == BSM_UNMAPPED)
