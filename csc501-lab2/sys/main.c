@@ -265,11 +265,11 @@ void proc1_test5(int* ret) {
 
   //kprintf("ready to allocate heap space\n");
   x = vgetmem(1024);
-  if ((x == NULL) || (x < 0x1000000)
+  if ((x ==SYSERR) || (x < 0x1000000)
       || (x > 0x1000000 + 128 * NBPG - 1024)) {
     *ret = TFAILED;
   }
-  if (x == NULL)
+  if (x == SYSERR)
     return;
 
   *x = 100;
@@ -281,18 +281,18 @@ void proc1_test5(int* ret) {
   vfreemem(x, 1024);
 
   x = vgetmem(129*NBPG); //try to acquire a space that is bigger than size of one backing store
-  if (x != NULL) {
+  if (x != SYSERR) {
     *ret = TFAILED;
   }
 
   x = vgetmem(50*NBPG);
   y = vgetmem(50*NBPG);
   z = vgetmem(50*NBPG);
-  if ((x == NULL) || (y == NULL) || (z != NULL)){
+  if ((x == SYSERR) || (y == SYSERR) || (z != SYSERR)){
     *ret = TFAILED;
-    if (x != NULL) vfreemem(x, 50*NBPG);
-    if (y != NULL) vfreemem(y, 50*NBPG);
-    if (z != NULL) vfreemem(z, 50*NBPG);
+    if (x != SYSERR) vfreemem(x, 50*NBPG);
+    if (y != SYSERR) vfreemem(y, 50*NBPG);
+    if (z != SYSERR) vfreemem(z, 50*NBPG);
     return;
   }
   vfreemem(y, 50*NBPG);

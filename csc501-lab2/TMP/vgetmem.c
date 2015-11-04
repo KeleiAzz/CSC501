@@ -22,7 +22,7 @@ WORD	*vgetmem(nbytes)
 	if (nbytes==0 || nbytes > 128*NBPG || proctab[currpid].vmemlist -> mnext == (struct mblock *) NULL) {
 //		kprintf("nbytes == 0 or mlen <= 0\n");
 		restore(ps);
-		return SYSERR;
+		return( (WORD *)NULL);
 	}
 	nbytes = (unsigned int) roundmb(nbytes);
 	p=proctab[currpid].vmemlist -> mnext;
@@ -50,7 +50,7 @@ WORD	*vgetmem(nbytes)
 		}
 	restore(ps);
 	// kprintf("To be implemented!\n");
-	return SYSERR;
+	return( (WORD *)NULL );
 	
 	// return( SYSERR );
 }

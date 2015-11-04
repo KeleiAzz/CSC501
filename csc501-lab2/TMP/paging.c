@@ -106,3 +106,7 @@ int get_PT(int vaddr)
   return (unsigned int)(vaddr >> 12) & 0x000003ff;
 }
 
+void set_PDBR(int pid)
+{
+  write_cr3(proctab[pid].pdbr);
+}
