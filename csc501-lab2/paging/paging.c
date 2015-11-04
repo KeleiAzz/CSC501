@@ -15,12 +15,10 @@ int createPT(int pid)
 	}
 	frm_tab[*avail].fr_status = FRM_MAPPED;
 	frm_tab[*avail].fr_pid = pid;
-  	// frm_tab[*avail].fr_vpno = FRAME0 + i;
   	frm_tab[*avail].fr_refcnt = 0;
   	frm_tab[*avail].fr_type = FR_TBL;
   	frm_tab[*avail].fr_dirty = 0;
   	frm_tab[*avail].fr_loadtime = -1;
-   //  kprintf("create pt for %d, in frame %d\n", pid, *avail);
     int i;
   	for(i = 0; i < 1024; i++)
   	{
@@ -55,7 +53,6 @@ int createPD(int pid)
   	frm_tab[*avail].fr_type = FR_DIR;
   	frm_tab[*avail].fr_dirty = 0;
   	frm_tab[*avail].fr_loadtime = 0;
-     //kprintf("create PD for %d, in frame %d\n", pid, *avail);
   	proctab[pid].pdbr = (unsigned long) (FRAME0 + *avail) * NBPG;
   	int i;
   	for(i = 0; i < 1024; i++)
@@ -67,7 +64,6 @@ int createPD(int pid)
   		pde -> pd_pwt = 0;
   		pde -> pd_pcd = 0;
   		pde -> pd_acc = 0;
-  		// pde -> pd_dirty = 0;
       pde -> pd_fmb = 0;
   		pde -> pd_mbz = 0;
   		pde -> pd_global = 0;
@@ -112,7 +108,5 @@ int get_PT(int vaddr)
 
 void set_PDBR(int pid)
 {
-  // unsigned int pdbr = proctab[pid].pdbr;
-  // kprintf("set pdbr for %d, %ld\n", pid, proctab[pid].pdbr);
   write_cr3(proctab[pid].pdbr);
 }

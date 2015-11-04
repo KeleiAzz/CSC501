@@ -27,28 +27,13 @@ int get_bs(bsd_t bs_id, unsigned int npages) {
 	if(bsm_tab[bs_id].bs_status == BSM_MAPPED)
 	{
 		restore(ps);
-		// kprintf("this bs %d is mapped with %d pages\n", bs_id, bsm_tab[bs_id].bs_npages);
 		return bsm_tab[bs_id].bs_npages;
 	}
 
 	if(bsm_tab[bs_id].bs_status == BSM_UNMAPPED)
 	{
-		// kprintf("get_bs -- bs with id %d is unmapped\n", bs_id);
-
 		bsm_tab[bs_id].bs_status = BSM_MAPPED;
 		bsm_tab[bs_id].bs_npages = npages;
-		// if(bsm_map(currpid, 4096, bs_id, npages) == SYSERR)
-		// {
-		// 	kprintf("can't create new map\n");
-		// 	restore(ps);
-
-		// 	return SYSERR;
-		// }
-		// else
-		// {
-		// 	restore(ps);
-		// 	return npages;
-		// }
 	}
 
     return npages;

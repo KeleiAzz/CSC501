@@ -389,7 +389,6 @@ void test_func7()
   int cnt = 0; 
   //can go up to  (NFRAMES - 5 frames for null prc - 1pd for main - 1pd + 1pt frames for this proc)
   //frame for pages will be from 1032-2047
-  kprintf("in test 7 func\n");
   int maxpage = (NFRAMES - (5 + 1 + 1 + 1));
   for (i=0;i<=maxpage/100;i++){
     if(get_bs(i,100) == SYSERR)
@@ -453,7 +452,6 @@ void test_func7()
       release_bs(i);    
   }
   // return;
-  kprintf("finished\n");
 }
 void test7(){
   int pid1;

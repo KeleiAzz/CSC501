@@ -25,29 +25,12 @@ WORD	*vgetmem(nbytes)
 		return( (WORD *)NULL);
 	}
 	nbytes = (unsigned int) roundmb(nbytes);
-
-	// p = &proctab[currpid].vmemlist;
-	// kprintf("p addr %d nbytes %d mlen %d\n",p, nbytes, proctab[currpid].vmemlist -> mlen);
-	// if(proctab[currpid].vmemlist -> mlen >= nbytes)
-	// {
-	// 	proctab[currpid].vmemlist -> mlen -= nbytes;
-	// 	restore(ps);
-
-	// 	// return ((WORD *) 4096 * NBPG + (proctab[currpid].vhpnpages * NBPG - p -> mlen));
-	// 	return((WORD ) 4096 * NBPG);
-	// }
-	
 	p=proctab[currpid].vmemlist -> mnext;
 	int len = p->mlen;
-	// if(p == proctab[currpid].vmemlist -> mnext) kprintf("in vgetmen %08x %d\n", p, p->mlen);
+	
 	for (q= proctab[currpid].vmemlist,p=proctab[currpid].vmemlist -> mnext;
 	     p != (struct mblock *) NULL ;
 	     q=p,p=p->mnext)
-		// if(p == proctab[currpid].vmemlist -> mnext) kprintf("in vgetmen %08x %d\n", p, p->mlen);
-		// if(p == proctab[currpid].vmemlist -> mnext) kprintf("in vgetmen %08x %d\n", p, p->mlen);
-		// kprintf("in vgetmen%08x\n", p);
-		
-		// kprintf("	in vgetmen%08x\n", p);
 		
 		if ( p->mlen == nbytes) 
 		{
@@ -57,11 +40,9 @@ WORD	*vgetmem(nbytes)
 		} 
 		else if ( p->mlen > nbytes ) 
 		{
-//			kprintf("in vgetmen %08x %d\n", p, p->mlen);
+
 			leftover = (struct mblock *)( (unsigned)p + nbytes );
-//			kprintf("in vgetmen%08x\n", leftover);
 			q->mnext = leftover;
-//			kprintf("in vgetmen%08x\n", q->mnext);
 			leftover->mnext = p->mnext;
 			leftover->mlen = p->mlen - nbytes;
 			restore(ps);

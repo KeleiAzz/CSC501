@@ -49,22 +49,12 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 	proctab[pid].vhpno = 4096;
 	proctab[pid].vhpnpages = hsize;
 
-//	kprintf("what is vmemlist\n");
-	// proctab[pid].vmemlist -> mlen = hsize * NBPG;
-	// resume(pid);
-	// sleep(1);
+	// This way of initializing vmemlist come from Di Chen's idea
 	int *addr;
 	addr = (int*) BACKING_STORE_BASE + bsm_id*0x00080000;
-//	kprintf("addr is %08x\n", addr);
 	*addr = (struct mblock *) NULL;
-//	kprintf("in addr is %d\n", *addr);
 	*(addr + 1) = hsize * NBPG;
-//	kprintf("in addr is %d\n", *(addr+1));
 	struct mblock *mptr = (struct mblock *) BACKING_STORE_BASE + bsm_id*0x00080000;
-	// struct mblock *mptr = (unsigned int) roundmb(4096 * NBPG);
-	// struct mblock *mptr = getmem(sizeof(struct mblock));
-	// mptr -> mlen = hsize * NBPG;
-	// mptr -> mnext = NULL;
 	proctab[pid].vmemlist -> mlen = hsize * NBPG;
 	proctab[pid].vmemlist -> mnext = (struct mblock *) 0x1000000;	
 	// mptr

@@ -41,8 +41,7 @@ SYSCALL get_frm(int* avail)
 		if(frm_tab[i].fr_status == FRM_UNMAPPED)
 		{
 			*avail = i;
-      // frm_tab[i].
-      // kprintf("got frame %d\n", i);
+      
       return i;
 		} /* code */
 	}
@@ -60,7 +59,7 @@ SYSCALL get_frm(int* avail)
   }
   if(page_replace_policy == LRU)
   {
-    int time = 999999, frm_id;
+    int time = 2147483640, frm_id;
     for(i = 0 ; i < NFRAMES; i++)
     {
       if(frm_tab[i].fr_type == FR_PAGE && frm_tab[i].fr_acctime <= time)
@@ -99,7 +98,6 @@ SYSCALL free_frm(int i)
 
     if(pte -> pt_pres == 0)
     {
-      kprintf("pt present is 0!!\n");
       return SYSERR;
     }
     pte -> pt_pres = 0;
@@ -120,7 +118,6 @@ SYSCALL free_frm(int i)
     frm_tab[i].fr_ref = 0;
     frm_tab[i].fr_type = -1;
     frm_tab[i].fr_dirty = 0;
-    //frm_tab[i].fr_cookie
     frm_tab[i].fr_loadtime = -1;
     return OK;
   }

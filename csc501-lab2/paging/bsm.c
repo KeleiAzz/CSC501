@@ -140,7 +140,7 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages)
   }
   else 
   {
-    kprintf("failed in the last else %d %d %d\n", bsm_tab[source].bs_status, bsm_tab[source].private, proctab[pid].bs_pid_map[source].bs_pid);
+    // kprintf("failed in the last else %d %d %d\n", bsm_tab[source].bs_status, bsm_tab[source].private, proctab[pid].bs_pid_map[source].bs_pid);
     return SYSERR;  
   }
   
@@ -175,18 +175,12 @@ SYSCALL bsm_unmap(int pid, int vpno, int flag)
     int j;
     for(j = 0; j < NFRAMES; j ++)
     {
-    //if((frm_tab[i].fr_pid == currpid) && (frm_tab[i].fr_status == MAPPED) && (frm_tab[i].fr_type == FR_PAGE))
       if((frm_tab[j].fr_status == FRM_MAPPED) && (frm_tab[j].fr_type == FR_PAGE) && (frm_tab[j].fr_pid == pid) && (frm_tab[j].fr_dirty == 1))
       {
           int tmp_store, tmp_pageth;
           if(bsm_lookup(frm_tab[j].fr_pid, frm_tab[j].fr_vpno * NBPG, &tmp_store, &tmp_pageth) != SYSERR) 
           {
-          //kprintf("pfint. bsm_lookup fail when writing back frame %d.\n", i);
-          //return SYSERR;
             write_bs((j + FRAME0)*NBPG, tmp_store, tmp_pageth);
-            // kprintf("write to bs for proc %d, in %d %d %d\n", frm_tab[j].fr_pid, tmp_store, tmp_pageth, currpid);
-          // frm_tab[i].fr_status = FRM_UNMAPPED;
-          // pt_t *pte
           }
           
       }
