@@ -4,7 +4,7 @@
 #include <lock.h>
 
 struct lentry locks[NLOCKS];
-int nextlock;]
+int nextlock;
 int lock_tab[NPROC][NLOCKS];
 
 void linit()

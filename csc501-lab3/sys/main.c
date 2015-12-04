@@ -70,7 +70,7 @@ void test1 ()
 }
 
 
-/*----------------------------------Test 2---------------------------*/
+// /*----------------------------------Test 2---------------------------*/
 void reader2 (char *msg, int lck)
 {
     lock (lck, READ, DEFAULT_LOCK_PRIO);
@@ -110,12 +110,12 @@ void test2 ()
     ldelete (lck);
     kill(pid1);
     kill(pid2);
-
+    kprintf("get value %d\n", testval);
     assert (testval == 40,"Test 2 FAILED\n");
     kprintf ("Test 2 PASSED!\n");
 }
 
-/*-----------------------------------Test 3---------------------------*/
+// /*-----------------------------------Test 3---------------------------*/
 void test3 ()
 {
     int     lck[NLOCKS];
@@ -126,10 +126,12 @@ void test3 ()
     
     for (index = 0; index < NLOCKS; index++) {
         lck[index] = lcreate ();
+        kprintf("return of lcreate: %d\n", lck[index]);
         assert (lck[index] != SYSERR,"Test 3 FAILED\n");
     }
 
     last_lck  = lcreate ();
+    kprintf("return of last lcreate: %d\n", last_lck);
     assert (last_lck == SYSERR,"Test 3 FAILED\n");
 
     for (index = 0; index < NLOCKS; index++) {
@@ -139,7 +141,7 @@ void test3 ()
 }
 
 
-/*----------------------------------Test 4---------------------------*/
+// /*----------------------------------Test 4---------------------------*/
 void reader4 (char *msg, int lck)
 {
     int ret;
@@ -182,7 +184,7 @@ void test4 ()
     kill(pid2);
 }
 
-/*-----------------------------------Test 5---------------------------*/
+// /*-----------------------------------Test 5---------------------------*/
 void test5 ()
 {
     int     lck[5];
@@ -212,36 +214,36 @@ void test5 ()
     kprintf ("Test 5 PASSED!\n");
 }
 
-/*----------------------------------Test 6---------------------------*/
-char output7[10];
-int count7;
-void reader6 (char i, int lck, int lprio)
-{
-    int     ret;
+// /*----------------------------------Test 6---------------------------*/
+ char output7[10];
+ int count7;
+ void reader6 (char i, int lck, int lprio)
+ {
+     int     ret;
 
-    //kprintf ("  %c: to acquire lock\n", i);
-    lock (lck, READ, lprio);
-    output7[count7++]=i;
-    //kprintf ("  %c: acquired lock, sleep 3s\n", i);
-    sleep (3);
-    //kprintf ("  %c: to release lock\n", i);
-    output7[count7++]=i;
-    releaseall (1, lck);
+     //kprintf ("  %c: to acquire lock\n", i);
+     lock (lck, READ, lprio);
+     output7[count7++]=i;
+     //kprintf ("  %c: acquired lock, sleep 3s\n", i);
+     sleep (3);
+     //kprintf ("  %c: to release lock\n", i);
+     output7[count7++]=i;
+     releaseall (1, lck);
     
-}
+ }
 
-void writer6 (char i, int lck, int lprio)
-{
-    //kprintf ("  %c: to acquire lock\n", i);
-    lock (lck, WRITE, lprio);
-    output7[count7++]=i;
-    //kprintf ("  %c: acquired lock, sleep 3s\n", i);
-    sleep (3);
-    //kprintf ("  %c: to release lock\n", i);
-    output7[count7++]=i;
-    releaseall (1, lck);
+ void writer6 (char i, int lck, int lprio)
+ {
+     //kprintf ("  %c: to acquire lock\n", i);
+     lock (lck, WRITE, lprio);
+     output7[count7++]=i;
+     //kprintf ("  %c: acquired lock, sleep 3s\n", i);
+     sleep (3);
+     //kprintf ("  %c: to release lock\n", i);
+     output7[count7++]=i;
+     releaseall (1, lck);
     
-}
+ }
 
 void test6 ()
 {
@@ -283,300 +285,300 @@ void test6 ()
     kprintf("Output is %s\n",output7);
 
 }
-/*----------------------------------Test 7---------------------------*/
-int lck1, lck2;
-void procA()
-{
-    kprintf ("rdA try to acquire lock 1\n");
-    int rc = lock(lck1, READ, 20);
-    if(rc == OK) kprintf ("rdA acquires lock 1, sleep 2s\n");
-    else kprintf("unable to get lock.\n");
-    sleep (2);
-    kprintf ("rdA releases lock 1\n");
-    releaseall (1, lck1);
-}
+// /*----------------------------------Test 7---------------------------*/
+// int lck1, lck2;
+// void procA()
+// {
+//     kprintf ("rdA try to acquire lock 1\n");
+//     int rc = lock(lck1, READ, 20);
+//     if(rc == OK) kprintf ("rdA acquires lock 1, sleep 2s\n");
+//     else kprintf("unable to get lock.\n");
+//     sleep (2);
+//     kprintf ("rdA releases lock 1\n");
+//     releaseall (1, lck1);
+// }
 
-void procB()
-{
-    kprintf ("wrB try to acquire lock 2\n");
-    int rc = lock(lck2, WRITE, 20);
-    if(rc == OK) kprintf ("wrB acquires lock 2, sleep 2s\n");
-    else kprintf("unable to get lock.\n");
-    sleep (2);
-    kprintf ("wrB releases lock 2\n");
-    releaseall (1, lck2);
-}
+// void procB()
+// {
+//     kprintf ("wrB try to acquire lock 2\n");
+//     int rc = lock(lck2, WRITE, 20);
+//     if(rc == OK) kprintf ("wrB acquires lock 2, sleep 2s\n");
+//     else kprintf("unable to get lock.\n");
+//     sleep (2);
+//     kprintf ("wrB releases lock 2\n");
+//     releaseall (1, lck2);
+// }
 
-void procC()
-{
-    kprintf ("rdC try to acquire lock 1\n");
-    int rc = lock(lck1, READ, 10);
-    if(rc == OK) kprintf ("rdC acquires lock 1\n");
-    else kprintf("unable to get lock.\n");
-    kprintf ("rdC try to acquire lock 2\n");
-    rc = lock(lck2, READ, 5);
-    if(rc == OK) kprintf ("rdC acquires lock 2, sleep 2s\n");
-    else kprintf("unable to get lock.\n");
-    sleep (2);
-    kprintf ("rdC releases lock 1&2\n");
-    releaseall (2, lck1, lck2);
-}
+// void procC()
+// {
+//     kprintf ("rdC try to acquire lock 1\n");
+//     int rc = lock(lck1, READ, 10);
+//     if(rc == OK) kprintf ("rdC acquires lock 1\n");
+//     else kprintf("unable to get lock.\n");
+//     kprintf ("rdC try to acquire lock 2\n");
+//     rc = lock(lck2, READ, 5);
+//     if(rc == OK) kprintf ("rdC acquires lock 2, sleep 2s\n");
+//     else kprintf("unable to get lock.\n");
+//     sleep (2);
+//     kprintf ("rdC releases lock 1&2\n");
+//     releaseall (2, lck1, lck2);
+// }
 
-void procD()
-{
-    kprintf ("wrD try to acquire lock 1\n");
-    int rc = lock(lck1, WRITE, 10);
-    if(rc == OK) kprintf ("wrD acquires lock 1\n");
-    else kprintf("unable to get lock.\n");
-    kprintf ("wrD try to acquire lock 2\n");
-    rc = lock(lck2, WRITE, 10);
-    if(rc == OK) kprintf ("wrD acquires lock 2, sleep 2s\n");
-    else kprintf("unable to get lock.\n");
-    sleep (2);
-    kprintf ("wrD releases lock 1&2\n");
-    releaseall (2, lck1, lck2);
-}
+// void procD()
+// {
+//     kprintf ("wrD try to acquire lock 1\n");
+//     int rc = lock(lck1, WRITE, 10);
+//     if(rc == OK) kprintf ("wrD acquires lock 1\n");
+//     else kprintf("unable to get lock.\n");
+//     kprintf ("wrD try to acquire lock 2\n");
+//     rc = lock(lck2, WRITE, 10);
+//     if(rc == OK) kprintf ("wrD acquires lock 2, sleep 2s\n");
+//     else kprintf("unable to get lock.\n");
+//     sleep (2);
+//     kprintf ("wrD releases lock 1&2\n");
+//     releaseall (2, lck1, lck2);
+// }
 
-void procE()
-{
-    kprintf ("rdE try to acquire lock 1\n");
-    int rc = lock(lck1, READ, 5);
-    if(rc == OK) kprintf ("rdE acquires lock 1, sleep 2s\n");
-    else kprintf("unable to get lock.\n");
-    sleep (2);
-    kprintf ("rdE releases lock 1\n");
-    releaseall (1, lck1);
-}
+// void procE()
+// {
+//     kprintf ("rdE try to acquire lock 1\n");
+//     int rc = lock(lck1, READ, 5);
+//     if(rc == OK) kprintf ("rdE acquires lock 1, sleep 2s\n");
+//     else kprintf("unable to get lock.\n");
+//     sleep (2);
+//     kprintf ("rdE releases lock 1\n");
+//     releaseall (1, lck1);
+// }
 
-void procF()
-{
-    kprintf ("wrF try to acquire lock 2\n");
-    int rc = lock(lck2, WRITE, 20);
-    if(rc == OK) kprintf ("wrF acquires lock 2, sleep 2s\n");
-    else kprintf("unable to get lock.\n");
-    sleep (2);
-    kprintf ("wrF releases lock 2\n");
-    releaseall (1, lck2);
-}
+// void procF()
+// {
+//     kprintf ("wrF try to acquire lock 2\n");
+//     int rc = lock(lck2, WRITE, 20);
+//     if(rc == OK) kprintf ("wrF acquires lock 2, sleep 2s\n");
+//     else kprintf("unable to get lock.\n");
+//     sleep (2);
+//     kprintf ("wrF releases lock 2\n");
+//     releaseall (1, lck2);
+// }
 
-void test7 () 
-{
-    int rdA, rdC, rdE;
-    int wrB, wrD, wrF;
+// void test7 () 
+// {
+//     int rdA, rdC, rdE;
+//     int wrB, wrD, wrF;
 
-    kprintf("\nTest 7: \nexpected output:\n rdA try to acquire lock 1\n rdA acquires lock 1, sleep 2s\n wrB try to acquire lock 2\n wrB acquires lock 2, sleep 2s\n rdC try to acquire lock 1\n rdC acquires lock 1\n rdC try to acquire lock 2\n wrD try to acquire lock 1\n rdE try to acquire lock 1\n wrF try to acquire lock 2\n rdA releases lock 1\n wrB releases lock 2\n wrF acquires lock 2, sleep 2s\n wrF releases lock 2\n rdC acquires lock 2, sleep 2s\n rdC releases lock 1&2\n wrD acquires lock 1\n wrD try to acquire lock 2\n wrD acquires lock 2, sleep 2s\n wrD releases lock 1&2\n rdE acquires lock 1, sleep 2s\n rdE releases lock 1\n\n\n real output: \n");
+//     kprintf("\nTest 7: \nexpected output:\n rdA try to acquire lock 1\n rdA acquires lock 1, sleep 2s\n wrB try to acquire lock 2\n wrB acquires lock 2, sleep 2s\n rdC try to acquire lock 1\n rdC acquires lock 1\n rdC try to acquire lock 2\n wrD try to acquire lock 1\n rdE try to acquire lock 1\n wrF try to acquire lock 2\n rdA releases lock 1\n wrB releases lock 2\n wrF acquires lock 2, sleep 2s\n wrF releases lock 2\n rdC acquires lock 2, sleep 2s\n rdC releases lock 1&2\n wrD acquires lock 1\n wrD try to acquire lock 2\n wrD acquires lock 2, sleep 2s\n wrD releases lock 1&2\n rdE acquires lock 1, sleep 2s\n rdE releases lock 1\n\n\n real output: \n");
 
-    kprintf("\nReal Output:\n");
-    lck1  = lcreate();
-    lck2  = lcreate();
+//     kprintf("\nReal Output:\n");
+//     lck1  = lcreate();
+//     lck2  = lcreate();
 
-    rdA = create(procA, 2000, 20, "rdA", 1, 1);
-    rdC = create(procC, 2000, 20, "rdC", 1, 1);
-    rdE = create(procE, 2000, 20, "rdE", 1, 1);
-    wrB = create(procB, 2000, 20, "wrB", 1, 1);
-    wrD = create(procD, 2000, 20, "wrD", 1, 1);
-    wrF = create(procF, 2000, 20, "wrF", 1, 1);
+//     rdA = create(procA, 2000, 20, "rdA", 1, 1);
+//     rdC = create(procC, 2000, 20, "rdC", 1, 1);
+//     rdE = create(procE, 2000, 20, "rdE", 1, 1);
+//     wrB = create(procB, 2000, 20, "wrB", 1, 1);
+//     wrD = create(procD, 2000, 20, "wrD", 1, 1);
+//     wrF = create(procF, 2000, 20, "wrF", 1, 1);
 
-    resume(rdA);
-    resume(wrB);
-    resume(rdC);
-    resume(wrD);
-    resume(rdE);
-    resume(wrF);
+//     resume(rdA);
+//     resume(wrB);
+//     resume(rdC);
+//     resume(wrD);
+//     resume(rdE);
+//     resume(wrF);
 
-    sleep (10);
-    ldelete (lck1);
-    ldelete (lck2);
-    kill(rdA);kill(rdC);kill(rdE);kill(wrB);kill(wrD);kill(wrF);
-}
+//     sleep (10);
+//     ldelete (lck1);
+//     ldelete (lck2);
+//     kill(rdA);kill(rdC);kill(rdE);kill(wrB);kill(wrD);kill(wrF);
+// }
 
-/* -----------------------Test 8 -------------------------------------------------*/
-int lck3;
-void procAA()
-{
-    kprintf ("rdA try to acquire lock 1\n");
-    int rc = lock(lck1, READ, 20);
-    if(rc == OK) kprintf ("rdA acquires lock 1, sleep 2s\n");
-    else kprintf("unable to get lock.\n");
-    sleep (2);
-    kprintf ("rdA releases lock 1&3\n");
-    if(releaseall (2, lck1, lck3) == SYSERR) kprintf("procA doesn't hold this lock\n");
-}
+// /* -----------------------Test 8 -------------------------------------------------*/
+// int lck3;
+// void procAA()
+// {
+//     kprintf ("rdA try to acquire lock 1\n");
+//     int rc = lock(lck1, READ, 20);
+//     if(rc == OK) kprintf ("rdA acquires lock 1, sleep 2s\n");
+//     else kprintf("unable to get lock.\n");
+//     sleep (2);
+//     kprintf ("rdA releases lock 1&3\n");
+//     if(releaseall (2, lck1, lck3) == SYSERR) kprintf("procA doesn't hold this lock\n");
+// }
 
-void procBB()
-{
-    kprintf ("wrB try to acquire lock 2\n");
-    int rc = lock(lck2, WRITE, 20);
-    if(rc == OK) kprintf ("wrB acquires lock 2, sleep 2s\n");
-    else kprintf("unable to get lock.\n");
-    sleep (2);
-    kprintf ("wrB releases lock 2\n");
-    releaseall (1, lck2);
-}
+// void procBB()
+// {
+//     kprintf ("wrB try to acquire lock 2\n");
+//     int rc = lock(lck2, WRITE, 20);
+//     if(rc == OK) kprintf ("wrB acquires lock 2, sleep 2s\n");
+//     else kprintf("unable to get lock.\n");
+//     sleep (2);
+//     kprintf ("wrB releases lock 2\n");
+//     releaseall (1, lck2);
+// }
 
-void procCC()
-{
-    kprintf ("rdC try to acquire lock 1\n");
-    int rc = lock(lck1, READ, 10);
-    if(rc == OK) kprintf ("rdC acquires lock 1\n");
-    else kprintf("unable to get lock.\n");
-    kprintf ("rdC try to acquire lock 2\n");
-    rc = lock(lck2, READ, 5);
-    if(rc == OK) kprintf ("rdC acquires lock 2, sleep 2s\n");
-    else kprintf("unable to get lock.\n");
-    sleep (2);
-    kprintf ("rdC releases lock 1&2\n");
-    releaseall (2, lck1, lck2);
-}
+// void procCC()
+// {
+//     kprintf ("rdC try to acquire lock 1\n");
+//     int rc = lock(lck1, READ, 10);
+//     if(rc == OK) kprintf ("rdC acquires lock 1\n");
+//     else kprintf("unable to get lock.\n");
+//     kprintf ("rdC try to acquire lock 2\n");
+//     rc = lock(lck2, READ, 5);
+//     if(rc == OK) kprintf ("rdC acquires lock 2, sleep 2s\n");
+//     else kprintf("unable to get lock.\n");
+//     sleep (2);
+//     kprintf ("rdC releases lock 1&2\n");
+//     releaseall (2, lck1, lck2);
+// }
 
-void procDD()
-{
-    kprintf ("wrD try to acquire lock 1\n");
-    int rc = lock(lck1, WRITE, 10);
-    if(rc == OK) kprintf ("wrD acquires lock 1\n");
-    else kprintf("unable to get lock.\n");
-    kprintf ("wrD try to acquire lock 2\n");
-    rc = lock(lck2, WRITE, 10);
-    if(rc == OK) kprintf ("wrD acquires lock 2, sleep 2s\n");
-    else kprintf("unable to get lock.\n");
-    sleep (2);
-    kprintf ("wrD releases lock 1&2\n");
-    releaseall (2, lck1, lck2);
-}
+// void procDD()
+// {
+//     kprintf ("wrD try to acquire lock 1\n");
+//     int rc = lock(lck1, WRITE, 10);
+//     if(rc == OK) kprintf ("wrD acquires lock 1\n");
+//     else kprintf("unable to get lock.\n");
+//     kprintf ("wrD try to acquire lock 2\n");
+//     rc = lock(lck2, WRITE, 10);
+//     if(rc == OK) kprintf ("wrD acquires lock 2, sleep 2s\n");
+//     else kprintf("unable to get lock.\n");
+//     sleep (2);
+//     kprintf ("wrD releases lock 1&2\n");
+//     releaseall (2, lck1, lck2);
+// }
 
-void procEE()
-{
-    kprintf ("rdE try to acquire lock 1\n");
-    int rc = lock(lck1, READ, 5);
-    if(rc == OK) kprintf ("rdE acquires lock 1, sleep 2s\n");
-    else kprintf("unable to get lock.\n");
-    sleep (2);
-    kprintf ("rdE releases lock 1\n");
-    releaseall (1, lck1);
-}
+// void procEE()
+// {
+//     kprintf ("rdE try to acquire lock 1\n");
+//     int rc = lock(lck1, READ, 5);
+//     if(rc == OK) kprintf ("rdE acquires lock 1, sleep 2s\n");
+//     else kprintf("unable to get lock.\n");
+//     sleep (2);
+//     kprintf ("rdE releases lock 1\n");
+//     releaseall (1, lck1);
+// }
 
-void procFF()
-{
-    kprintf ("wrF try to acquire lock 2\n");
-    int rc = lock(lck2, WRITE, 20);
-    if(rc == OK) kprintf ("wrF acquires lock 2, sleep 2s\n");
-    else kprintf("unable to get lock.\n");
-    sleep (2);
-    kprintf ("wrF releases lock 2\n");
-    releaseall (1, lck2);
-}
+// void procFF()
+// {
+//     kprintf ("wrF try to acquire lock 2\n");
+//     int rc = lock(lck2, WRITE, 20);
+//     if(rc == OK) kprintf ("wrF acquires lock 2, sleep 2s\n");
+//     else kprintf("unable to get lock.\n");
+//     sleep (2);
+//     kprintf ("wrF releases lock 2\n");
+//     releaseall (1, lck2);
+// }
 
-void test8 () 
-{
-    int rdA, rdC, rdE;
-    int wrB, wrD, wrF;
+// void test8 () 
+// {
+//     int rdA, rdC, rdE;
+//     int wrB, wrD, wrF;
 
-    kprintf("\nTest 8: \nexpected output:\n rdA try to acquire lock 1\n rdA acquires lock 1, sleep 2s\n wrB try to acquire lock 2\n wrB acquires lock 2, sleep 2s\n rdC try to acquire lock 1\n rdC acquires lock 1\n rdC try to acquire lock 2\n wrD try to acquire lock 1\n rdE try to acquire lock 1\n wrF try to acquire lock 2\n rdA releases lock 1&3\n procA doesn't hold this lock\n wrB releases lock 2\n wrF acquires lock 2, sleep 2s\n wrF releases lock 2\n rdC acquires lock 2, sleep 2s\n rdC releases lock 1&2\n wrD acquires lock 1\n wrD try to acquire lock 2\n wrD acquires lock 2, sleep 2s\n wrD releases lock 1&2\n rdE acquires lock 1, sleep 2s\n rdE releases lock 1\n\n\n real output: \n");
+//     kprintf("\nTest 8: \nexpected output:\n rdA try to acquire lock 1\n rdA acquires lock 1, sleep 2s\n wrB try to acquire lock 2\n wrB acquires lock 2, sleep 2s\n rdC try to acquire lock 1\n rdC acquires lock 1\n rdC try to acquire lock 2\n wrD try to acquire lock 1\n rdE try to acquire lock 1\n wrF try to acquire lock 2\n rdA releases lock 1&3\n procA doesn't hold this lock\n wrB releases lock 2\n wrF acquires lock 2, sleep 2s\n wrF releases lock 2\n rdC acquires lock 2, sleep 2s\n rdC releases lock 1&2\n wrD acquires lock 1\n wrD try to acquire lock 2\n wrD acquires lock 2, sleep 2s\n wrD releases lock 1&2\n rdE acquires lock 1, sleep 2s\n rdE releases lock 1\n\n\n real output: \n");
 
-    kprintf("\nReal Output:\n");
-    lck1  = lcreate();
-    lck2  = lcreate();
-    lck3  = lcreate();
+//     kprintf("\nReal Output:\n");
+//     lck1  = lcreate();
+//     lck2  = lcreate();
+//     lck3  = lcreate();
 
-    rdA = create(procAA, 2000, 20, "rdA", 1, 1);
-    rdC = create(procCC, 2000, 20, "rdC", 1, 1);
-    rdE = create(procEE, 2000, 20, "rdE", 1, 1);
-    wrB = create(procBB, 2000, 20, "wrB", 1, 1);
-    wrD = create(procDD, 2000, 20, "wrD", 1, 1);
-    wrF = create(procFF, 2000, 20, "wrF", 1, 1);
+//     rdA = create(procAA, 2000, 20, "rdA", 1, 1);
+//     rdC = create(procCC, 2000, 20, "rdC", 1, 1);
+//     rdE = create(procEE, 2000, 20, "rdE", 1, 1);
+//     wrB = create(procBB, 2000, 20, "wrB", 1, 1);
+//     wrD = create(procDD, 2000, 20, "wrD", 1, 1);
+//     wrF = create(procFF, 2000, 20, "wrF", 1, 1);
 
-    resume(rdA);
-    resume(wrB);
-    resume(rdC);
-    resume(wrD);
-    resume(rdE);
-    resume(wrF);
-    sleep (10);
-    ldelete (lck1); ldelete(lck2); ldelete(lck3);
-    kill(rdA);kill(rdC);kill(rdE);kill(wrB);kill(wrD);kill(wrF);
-    sleep(1);
-}
-/*-------------------------Test 9 ----------------------------------------------------------*/
-void reader(char *msg, int lck, int lprio) {
-    int rc;
-    rc = lock(lck, READ, lprio);
-    if (rc == SYSERR) {
-    kprintf ("  %s: lock returned SYSERR\n", msg);
-        return;
-    }
-    if (rc == DELETED) {
-        kprintf ("  %s: lock was DELETED\n", msg);
-        return;
-    }
-    kprintf ("  %s: acquired lock, sleep 3s\n", msg);
-    sleep (3);
-    releaseall (1, lck);
-}
+//     resume(rdA);
+//     resume(wrB);
+//     resume(rdC);
+//     resume(wrD);
+//     resume(rdE);
+//     resume(wrF);
+//     sleep (10);
+//     ldelete (lck1); ldelete(lck2); ldelete(lck3);
+//     kill(rdA);kill(rdC);kill(rdE);kill(wrB);kill(wrD);kill(wrF);
+//     sleep(1);
+// }
+// /*-------------------------Test 9 ----------------------------------------------------------*/
+// void reader(char *msg, int lck, int lprio) {
+//     int rc;
+//     rc = lock(lck, READ, lprio);
+//     if (rc == SYSERR) {
+//     kprintf ("  %s: lock returned SYSERR\n", msg);
+//         return;
+//     }
+//     if (rc == DELETED) {
+//         kprintf ("  %s: lock was DELETED\n", msg);
+//         return;
+//     }
+//     kprintf ("  %s: acquired lock, sleep 3s\n", msg);
+//     sleep (3);
+//     releaseall (1, lck);
+// }
 
-void writer(char *msg, int lck, int lprio) {
-    int rc;
-    rc = lock(lck, WRITE, lprio);
-    if (rc == SYSERR) {
-        kprintf ("  %s: lock returned SYSERR\n", msg);
-        return;
-    }
-    if (rc == DELETED) {
-        kprintf ("  %s: lock was DELETED\n", msg);
-        return;
-    }
-    kprintf ("  %s: acquired lock, sleep 3s\n", msg);
-    sleep (3);
-    releaseall (1, lck);
-}
-void test9 ()
-{
-    int i;
-    int lastlck;
-    int rd1, rd2, rd3, rd4;
-    int wr1;
+// void writer(char *msg, int lck, int lprio) {
+//     int rc;
+//     rc = lock(lck, WRITE, lprio);
+//     if (rc == SYSERR) {
+//         kprintf ("  %s: lock returned SYSERR\n", msg);
+//         return;
+//     }
+//     if (rc == DELETED) {
+//         kprintf ("  %s: lock was DELETED\n", msg);
+//         return;
+//     }
+//     kprintf ("  %s: acquired lock, sleep 3s\n", msg);
+//     sleep (3);
+//     releaseall (1, lck);
+// }
+// void test9 ()
+// {
+//     int i;
+//     int lastlck;
+//     int rd1, rd2, rd3, rd4;
+//     int wr1;
 
-    kprintf("\nTest 9:\nexpected output:\nreader A: acquired lock, sleep 3s\nwriter C: lock was DELETED\nreader B: lock returned SYSERR\nreader D: acquired lock, sleep 3s\n");
+//     kprintf("\nTest 9:\nexpected output:\nreader A: acquired lock, sleep 3s\nwriter C: lock was DELETED\nreader B: lock returned SYSERR\nreader D: acquired lock, sleep 3s\n");
 
-    kprintf("\nReal Output:\n");
-    // Create original lock
-    lastlck = lcreate();
+//     kprintf("\nReal Output:\n");
+//     // Create original lock
+//     lastlck = lcreate();
 
-    // Create processes that use original lock
-    rd1 = create(reader, 2000, 20, "reader", 3, "reader A", lastlck, 20);
-    rd2 = create(reader, 2000, 20, "reader", 3, "reader B", lastlck, 20);
-    wr1 = create(writer, 2000, 20, "writer", 3, "writer C", lastlck, 30);
+//     // Create processes that use original lock
+//     rd1 = create(reader, 2000, 20, "reader", 3, "reader A", lastlck, 20);
+//     rd2 = create(reader, 2000, 20, "reader", 3, "reader B", lastlck, 20);
+//     wr1 = create(writer, 2000, 20, "writer", 3, "writer C", lastlck, 30);
 
-    // Start reader A
-    resume(rd1);
-    sleep(1);
+//     // Start reader A
+//     resume(rd1);
+//     sleep(1);
 
-    // Start writer C. Will get returned DELETED after lock gets
-    // deleted.
-    resume(wr1);
-    sleep(1);
+//     // Start writer C. Will get returned DELETED after lock gets
+//     // deleted.
+//     resume(wr1);
+//     sleep(1);
 
-    // Delete lock
-    ldelete(lastlck);
+//     // Delete lock
+//     ldelete(lastlck);
 
-    for (i=1; i<NLOCKS; i++) {
-       lastlck = lcreate();
-       ldelete(lastlck);
-    }
+//     for (i=1; i<NLOCKS; i++) {
+//        lastlck = lcreate();
+//        ldelete(lastlck);
+//     }
 
-    // Create a new lock (this lock will use same slot as original)
-    lastlck = lcreate();
+//     // Create a new lock (this lock will use same slot as original)
+//     lastlck = lcreate();
 
-    // Create a new process to use the new lock spot. 
-    rd3 = create(reader, 2000, 20, "reader", 3, "reader D", lastlck, 20);
+//     // Create a new process to use the new lock spot. 
+//     rd3 = create(reader, 2000, 20, "reader", 3, "reader D", lastlck, 20);
 
-    // Start reader B: Should get returned SYSERR since the lock it
-    // uses was already deleted and a new lock is using that index
-    resume(rd2);
+//     // Start reader B: Should get returned SYSERR since the lock it
+//     // uses was already deleted and a new lock is using that index
+//     resume(rd2);
 
-    // Start reader D that uses new lock
-    resume(rd3);
-    sleep(4);
-}
+//     // Start reader D that uses new lock
+//     resume(rd3);
+//     sleep(4);
+// }
 
 int main( )
 {
@@ -587,7 +589,7 @@ int main( )
     test4();
     test5();
     test6();
-    test7();
-    test8();
-    test9();
+    // test7();
+    // test8();
+    // test9();
 }

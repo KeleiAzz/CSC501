@@ -7,6 +7,9 @@
 #define	NLOCKS		50	/* number of locks, if not defined	*/
 #endif
 
+#define READ	1
+#define WRITE	2
+
 #define	LFREE	'\01'		/* this lock is free		*/
 #define	LUSED	'\02'		/* this lock is used		*/
 
@@ -21,7 +24,7 @@ struct	lentry	{		/* lock table entry		*/
 };
 extern	struct	lentry	locks[];
 extern	int	nextlock;
-extern	int lock_tab[][];
+extern	int lock_tab[][NLOCKS];
 
 
 #define	isbadlock(s)	(s<0 || s>=NLOCKS)

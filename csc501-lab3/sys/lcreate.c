@@ -8,20 +8,20 @@ LOCAL int newlock();
 SYSCALL lcreate()
 {
 	STATWORD ps;
-	int lock;
+	int lockdes;
 
 	disable(ps);
-	if( (lock=newlock()) == SYSERR){
+	if( (lockdes=newlock()) == SYSERR){
 		restore(ps);
 		return SYSERR;
 	}
 	restore(ps);
-	return lock;
+	return lockdes;
 }
 
 LOCAL int newlock()
 {
-	int lock, i;
+	int lock, i, j;
 	for( i = 0; i < NLOCKS; i++)
 	{
 		lock = nextlock--;
@@ -35,7 +35,8 @@ LOCAL int newlock()
 			locks[lock].lwriters = 0;
 
 			for(j = 0; j < NPROC; j++) lock_tab[j][lock] = 0;
-			return 
+			return locks[lock].lockdes;
 		}
 	}
+	return SYSERR;
 }
