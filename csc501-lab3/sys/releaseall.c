@@ -9,12 +9,13 @@ int releaseall(int numlocks, int ldes1, ...)
 	int lockdes, has_err = 0;
 	int pid = currpid;
 	STATWORD ps;
-	disable(ps);
+	
 	struct lentry *lptr;
 	// unsigned long *a = (unsigned long *)(&ldes1);
     for (i = 0 ; i < numlocks ; i++)
 	{
         lockdes = *(&ldes1 + i); 
+        disable(ps);
         // kprintf("release lockdes: %d\n", lockdes);
 		int lock_id = lockdes % NLOCKS;
 		lptr = &locks[lock_id];
@@ -85,10 +86,10 @@ int releaseall(int numlocks, int ldes1, ...)
 			}
 
 		}
-		
+		restore(ps);	
 		// if(release(currpid, lockdes) == SYSERR) has_err = 1;
 	}
-	restore(ps);
+	
 	resched();
 	if(has_err == 1) return(SYSERR);
 	else return(OK);
